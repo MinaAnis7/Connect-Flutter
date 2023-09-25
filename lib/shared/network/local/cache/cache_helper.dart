@@ -18,4 +18,9 @@ class CacheHelper
   {
     return sharedPreferences.get(key);
   }
+
+  static void removeData(String key)
+  {
+    sharedPreferences.remove(key);
+  }
 }

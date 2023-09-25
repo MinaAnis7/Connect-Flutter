@@ -20,7 +20,7 @@ void main() async{
 }
 
 class MyApp extends StatelessWidget {
-  Widget startWidget = CacheHelper.getData('userId') != null? Layout() : LoginScreen();
+  final Widget startWidget = CacheHelper.getData('userId') != null? Layout() : LoginScreen();
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

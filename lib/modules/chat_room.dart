@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:social_app/models/user_model.dart';
+import 'package:social_app/shared/network/local/cache/cache_helper.dart';
 import 'package:social_app/shared/network/local/cubit/cubit.dart';
 import 'package:social_app/shared/style/colors.dart';
 import '../shared/components/components.dart';
@@ -12,8 +13,8 @@ import '../shared/network/local/cubit/cubit_states.dart';
 import 'package:flutter/foundation.dart' as foundation;
 
 class ChatRoom extends StatelessWidget {
-  late UserModel receiver;
-  TextEditingController messageController = TextEditingController();
+  final UserModel receiver;
+  final TextEditingController messageController = TextEditingController();
 
   ChatRoom(this.receiver);
 
@@ -95,7 +96,7 @@ class ChatRoom extends StatelessWidget {
                                 itemBuilder: (context, index) {
                                   String message = cubit.messages[index].message;
 
-                                  if(cubit.messages[index].senderId == cubit.userId)
+                                  if(cubit.messages[index].senderId == CacheHelper.getData('userId'))
                                     return myMessage(message);
                                   else
                                     return recipientMessage(message);

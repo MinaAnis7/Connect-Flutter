@@ -29,7 +29,7 @@ class AppCubit extends Cubit<AppStates> {
 
   static AppCubit get(context) => BlocProvider.of(context);
 
-  String? userId = CacheHelper.getData('userId');
+  
 
   //#region Obscure Text
   bool isObscure = true;
@@ -88,16 +88,19 @@ class AppCubit extends Cubit<AppStates> {
       email: email,
       password: Password,
     )
-        .then((value) {
+        .then((value) async {
       emit(UserLoginSuccessState());
 
       CacheHelper.putString('userId', value.user!.uid)
-          .then((value) => kDebugMode ? print(value) : null)
-          .catchError((error) => kDebugMode ? print(error.toString()) : null);
-      getUserData();
-      getPosts();
-      getAllUsers();
-      getProfilePosts();
+          .then((value) async{
+        await getUserData();
+        getPosts();
+        getProfilePosts();
+        getAllUsers();
+      })
+          .catchError((error) {
+        kDebugMode ? print(error.toString()) : null;
+      });
       if (kDebugMode) print(value.user!.email);
     }).catchError((error) {
       emit(UserLoginErrorState(error.toString()));
@@ -138,7 +141,7 @@ class AppCubit extends Cubit<AppStates> {
   //#region Get User Data
   UserModel? userModel;
 
-  void getUserData() {
+  Future<bool> getUserData() {
     FirebaseFirestore.instance
         .collection('users')
         .doc(CacheHelper.getData('userId'))
@@ -146,10 +149,14 @@ class AppCubit extends Cubit<AppStates> {
         .then((value) {
       userModel = UserModel.fromJson(value.data());
       emit(GetUserDataSuccessState());
+      return Future.value(true);
     }).catchError((error) {
       if (kDebugMode) print(error);
       emit(GetUserDataErrorState());
+      return Future.value(false);
     });
+
+    return Future.value(false);
   }
 
   Future<void> getUserDataRefresh() async {
@@ -484,7 +491,7 @@ class AppCubit extends Cubit<AppStates> {
   //#region Get Posts
   List<PostModel> posts = [];
 
-  void getPosts() {
+  Future<bool> getPosts() {
     emit(GetPostsLoadingState());
     posts = [];
     FirebaseFirestore.instance.collection('posts').get().then((value) {
@@ -492,29 +499,37 @@ class AppCubit extends Cubit<AppStates> {
         posts.add(PostModel.fromJson(element.data()));
       });
       emit(GetPostsSuccessState());
+      return Future.value(true);
     }).catchError((error) {
       errorMsg(error.toString());
       emit(GetUserDataErrorState());
+      return Future.value(false);
     });
+
+    return Future.value(false);
   }
 
   List<PostModel> profilePosts = [];
 
   void getProfilePosts() {
+    print("start");
     profilePosts = [];
     FirebaseFirestore.instance
     .collection('users')
-    .doc(userId)
+    .doc(CacheHelper.getData('userId'))
     .collection('posts')
     .get()
     .then((value) {
+      print("before foreach");
+      print(value);
       value.docs.forEach((doc) {
        DocumentReference docRef = doc.data()['post'];
        docRef.get().then((value) {
          profilePosts.add(PostModel.fromJson(value.data() as Map<String, dynamic>));
+         emit(GetProfilePostsState());
        });
+       print("after foreach");
       });
-      emit(GetProfilePostsState());
     })
     .catchError((error){
       errorMsg(error.toString());
@@ -669,7 +684,7 @@ class AppCubit extends Cubit<AppStates> {
 
   List<UserModel> allUsers = [];
 
-  void getAllUsers()
+  Future<bool> getAllUsers()
   {
     emit(GetAllUsersLoadingState());
 
@@ -680,15 +695,19 @@ class AppCubit extends Cubit<AppStates> {
         .get()
         .then((value) {
           value.docs.forEach((doc) {
-            if(doc.data()['id'] != userId)
+            if(doc.data()['id'] != CacheHelper.getData('userId'))
               allUsers.add(UserModel.fromJson(doc.data()));
           });
           emit(GetAllUsersSuccessState());
+          return Future.value(true);
     })
         .catchError((error){
           errorMsg(error.toString());
           emit(GetAllUsersErrorState());
+          return Future.value(false);
     });
+
+    return Future.value(false);
   }
 
   //#endregion
@@ -708,6 +727,7 @@ class AppCubit extends Cubit<AppStates> {
 
   void sendMessage(String message, String receiverId)
   {
+    String userId = CacheHelper.getData('userId');
     DocumentReference sender = FirebaseFirestore.instance.collection('users').doc(userId);
     DocumentReference receiver = FirebaseFirestore.instance.collection('users').doc(receiverId);
     DateTime now = DateTime.now();
@@ -749,7 +769,7 @@ class AppCubit extends Cubit<AppStates> {
   {
     FirebaseFirestore.instance
         .collection('users')
-        .doc(userId)
+        .doc(CacheHelper.getData('userId'))
         .collection('connections')
         .doc(receiverId)
         .collection('messages')
@@ -764,6 +784,15 @@ class AppCubit extends Cubit<AppStates> {
 
           emit(GetMessagesState());
     });
+  }
+
+  //#endregion
+
+  //# region Sign out
+
+  void signOut() async {
+    await FirebaseAuth.instance.signOut();
+    CacheHelper.removeData('userId');
   }
 
   //#endregion

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:social_app/modules/settings.dart';
 import 'package:social_app/shared/components/components.dart';
 import 'package:social_app/shared/network/local/cubit/cubit.dart';
 import 'package:social_app/shared/network/local/cubit/cubit_states.dart';
@@ -32,14 +34,28 @@ class Layout extends StatelessWidget {
             ),
             actions: [
               IconButton(
-                onPressed: () {
-                },
+                onPressed: () {},
                 icon: FaIcon(FontAwesomeIcons.bell),
               ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(MyIcons.search),
-              ),
+              if (cubit.currentIndex == 3)
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        PageTransition(
+                          type: PageTransitionType.rightToLeftWithFade,
+                          child: Settings(),
+                          duration: Duration(milliseconds: 200),
+                          reverseDuration: Duration(milliseconds: 200)
+                        ),
+                    );
+                  },
+                  icon: Icon(Icons.settings),
+                ),
+              if (cubit.currentIndex != 3)
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(MyIcons.search),
+                ),
             ],
           ),
           body: cubit.screens[cubit.currentIndex],
@@ -50,7 +66,7 @@ class Layout extends StatelessWidget {
               currentIndex: cubit.currentIndex,
               onTap: (index) {
                 cubit.changeIndex(index);
-                if(index == 3) {
+                if (index == 3) {
                   cubit.getUserData();
                 }
               },
