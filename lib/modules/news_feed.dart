@@ -161,7 +161,7 @@ class NewsFeed extends StatelessWidget {
                                       Text(
                                         'Share your thoughts...',
                                         style: TextStyle(
-                                          fontSize: 15.0.sp,
+                                          fontSize: 12.9.sp,
                                           color: Colors.grey,
                                         ),
                                       ),
@@ -203,7 +203,7 @@ class NewsFeed extends StatelessWidget {
                                               Text(
                                                 'Image',
                                                 style: TextStyle(
-                                                    fontSize: 14.sp,
+                                                    fontSize: 12.sp,
                                                     color: Colors.grey),
                                               ),
                                             ],
@@ -293,7 +293,7 @@ class NewsFeed extends StatelessWidget {
                                               Text(
                                                 'Tags',
                                                 style: TextStyle(
-                                                    fontSize: 14.sp,
+                                                    fontSize: 12.sp,
                                                     color: Colors.grey),
                                               ),
                                             ],
@@ -430,7 +430,7 @@ class NewsFeed extends StatelessWidget {
                       Text(
                         post.name,
                         style: TextStyle(
-                          fontSize: 15.sp,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -438,7 +438,7 @@ class NewsFeed extends StatelessWidget {
                       Text(
                         post.dateTime,
                         style: TextStyle(
-                          fontSize: 12.9.sp,
+                          fontSize: 12.sp,
                           color: Colors.grey,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -450,7 +450,7 @@ class NewsFeed extends StatelessWidget {
                 // Post options
                 IconButton(
                   onPressed: () {},
-                  icon: FaIcon(FontAwesomeIcons.ellipsis),
+                  icon: FaIcon(FontAwesomeIcons.ellipsis, size: 20.sp,),
                 ),
 
                 SizedBox(
@@ -540,13 +540,14 @@ class NewsFeed extends StatelessWidget {
                         Icon(
                           MyIcons.heart,
                           color: Colors.red,
+                          size: 20.sp,
                         ),
                         SizedBox(
                           width: 5.w,
                         ),
                         Text(
                           '${post.numOfLikes}',
-                          style: TextStyle(color: Colors.red),
+                          style: TextStyle(color: Colors.red, fontSize: 13.sp),
                         ),
                       ],
                     ),
@@ -558,6 +559,7 @@ class NewsFeed extends StatelessWidget {
                       Icon(
                         MyIcons.comment,
                         color: blue,
+                        size: 20.sp,
                       ),
                       SizedBox(
                         width: 5.w,
@@ -566,6 +568,7 @@ class NewsFeed extends StatelessWidget {
                         '${post.numOfComments}',
                         style: TextStyle(
                           color: blue,
+                          fontSize: 13.sp,
                         ),
                       ),
                     ],
@@ -611,6 +614,7 @@ class NewsFeed extends StatelessWidget {
                                     Icon(
                                       MyIcons.heart,
                                       color: Colors.red,
+                                      size: 22.sp,
                                     ),
                                     SizedBox(
                                       width: 5.w,
@@ -620,6 +624,7 @@ class NewsFeed extends StatelessWidget {
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.red,
+                                        fontSize: 14.sp
                                       ),
                                     ),
                                   ],
@@ -633,11 +638,11 @@ class NewsFeed extends StatelessWidget {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(MyIcons.heart),
+                                    Icon(MyIcons.heart, size: 22.sp,),
                                     SizedBox(
                                       width: 5.w,
                                     ),
-                                    Text('Love'),
+                                    Text('Love', style: TextStyle(fontSize: 14.sp),),
                                   ],
                                 ),
                               );
@@ -646,11 +651,11 @@ class NewsFeed extends StatelessWidget {
                             return Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(MyIcons.heart),
+                                Icon(MyIcons.heart, size: 22.sp,),
                                 SizedBox(
                                   width: 5.w,
                                 ),
-                                Text('Love'),
+                                Text('Love', style: TextStyle(fontSize: 14.sp)),
                               ],
                             );
                           }
@@ -668,11 +673,11 @@ class NewsFeed extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(MyIcons.comment),
+                          Icon(MyIcons.comment, size: 22.sp,),
                           SizedBox(
                             width: 5.w,
                           ),
-                          Text('Comment'),
+                          Text('Comment', style: TextStyle(fontSize: 14.sp)),
                         ],
                       ),
                     ),

@@ -10,13 +10,15 @@ import 'package:social_app/shared/network/local/cubit/cubit_states.dart';
 import '../style/colors.dart';
 
 //#region Connect logo
-Widget logo = Text(
-  'Connect',
-  style: TextStyle(
-    fontFamily: 'Pacifico',
-    color: blue,
-    fontSize: 24.0.sp,
-    fontWeight: FontWeight.w700,
+Widget logo = Center(
+  child:   Text(
+    'Connect',
+    style: TextStyle(
+      fontFamily: 'Pacifico',
+      color: blue,
+      fontSize: 22.0.sp,
+      fontWeight: FontWeight.w700,
+    ),
   ),
 );
 

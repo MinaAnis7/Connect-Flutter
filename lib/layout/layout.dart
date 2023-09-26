@@ -30,12 +30,13 @@ class Layout extends StatelessWidget {
               style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
-                  fontSize: 22.0.sp),
+                  fontSize: 18.0.sp),
             ),
             actions: [
               IconButton(
                 onPressed: () {},
-                icon: FaIcon(FontAwesomeIcons.bell),
+                padding: EdgeInsets.zero,
+                icon: FaIcon(FontAwesomeIcons.bell, size: 20.sp,),
               ),
               if (cubit.currentIndex == 3)
                 IconButton(
@@ -49,20 +50,25 @@ class Layout extends StatelessWidget {
                         ),
                     );
                   },
-                  icon: Icon(Icons.settings),
+                  padding: EdgeInsets.zero,
+                  icon: Icon(Icons.settings, size: 20.sp, ),
                 ),
               if (cubit.currentIndex != 3)
                 IconButton(
                   onPressed: () {},
-                  icon: Icon(MyIcons.search),
+                  padding: EdgeInsets.zero,
+                  icon: Icon(MyIcons.search, size: 20.sp,),
                 ),
             ],
           ),
           body: cubit.screens[cubit.currentIndex],
           bottomNavigationBar: SizedBox(
-            height: MediaQuery.of(context).size.height / 13,
+            height: MediaQuery.of(context).size.height / 11.7,
             child: BottomNavigationBar(
               items: cubit.navItems,
+              unselectedFontSize: 10.sp,
+              selectedFontSize: 12.sp,
+              iconSize: 20.sp,
               currentIndex: cubit.currentIndex,
               onTap: (index) {
                 cubit.changeIndex(index);

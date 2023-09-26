@@ -448,7 +448,8 @@ class AppCubit extends Cubit<AppStates> {
         icon: FaIcon(
           FontAwesomeIcons.newspaper,
         ),
-        label: 'News Feed'),
+        label: 'News Feed',
+    ),
     BottomNavigationBarItem(
         icon: Icon(
           CupertinoIcons.chat_bubble_2,
@@ -730,7 +731,7 @@ class AppCubit extends Cubit<AppStates> {
     String userId = CacheHelper.getData('userId');
     DocumentReference sender = FirebaseFirestore.instance.collection('users').doc(userId);
     DocumentReference receiver = FirebaseFirestore.instance.collection('users').doc(receiverId);
-    DateTime now = DateTime.now();
+    final now = FieldValue.serverTimestamp();
 
     sender.collection('connections')
     .doc(receiverId)
