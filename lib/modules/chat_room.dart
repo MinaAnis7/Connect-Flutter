@@ -1,7 +1,6 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -38,6 +37,7 @@ class ChatRoom extends StatelessWidget {
             AppCubit cubit = AppCubit.get(context);
 
             return Scaffold(
+              resizeToAvoidBottomInset: true,
               appBar: AppBar(
                 leading: IconButton(
                   onPressed: () {
@@ -120,94 +120,91 @@ class ChatRoom extends StatelessWidget {
                       // Typing Section
                       Padding(
                         padding: EdgeInsets.all(15.h),
-                        child: Padding(
-                          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              // TFF
-                              Expanded(
-                                  child: Container(
-                                    clipBehavior: Clip.hardEdge,
-                                    decoration: BoxDecoration(
-                                      color: Colors.transparent,
-                                      borderRadius: BorderRadius.all(Radius.circular(17.sp)),
-                                    ),
-                                    child: TextFormField(
-                                      decoration: InputDecoration(
-                                        prefixIcon: MaterialButton(
-                                          onPressed: () async {
-                                            FocusScope.of(context).unfocus();
-                                            await Future.delayed(Duration(milliseconds: 100,));
-                                            cubit.changeEmojiVisibility();
-                                          },
-                                          minWidth: 40.w,
-                                          padding: EdgeInsets.zero,
-                                          child: Icon(
-                                            Icons.tag_faces_outlined,
-                                            size: 26.sp,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                        contentPadding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 5.w,),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(17.sp),
-                                          borderSide: BorderSide.none,
-                                        ),
-                                        filled: true,
-                                        fillColor: superBabyBlue,
-                                        hintText: 'Your Message...',
-                                      ),
-                                      minLines: 1,
-                                      controller: messageController,
-                                      maxLines: 5,
-                                      onTap: () {
-                                        if(cubit.emojiIsNotVisible == false)
-                                        {
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            // TFF
+                            Expanded(
+                                child: Container(
+                                  clipBehavior: Clip.hardEdge,
+                                  decoration: BoxDecoration(
+                                    color: Colors.transparent,
+                                    borderRadius: BorderRadius.all(Radius.circular(17.sp)),
+                                  ),
+                                  child: TextFormField(
+                                    decoration: InputDecoration(
+                                      prefixIcon: MaterialButton(
+                                        onPressed: () async {
+                                          FocusScope.of(context).unfocus();
+                                          await Future.delayed(Duration(milliseconds: 100,));
                                           cubit.changeEmojiVisibility();
-                                        }
-                                      },
+                                        },
+                                        minWidth: 40.w,
+                                        padding: EdgeInsets.zero,
+                                        child: Icon(
+                                          Icons.tag_faces_outlined,
+                                          size: 26.sp,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      contentPadding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 5.w,),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(17.sp),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      filled: true,
+                                      fillColor: superBabyBlue,
+                                      hintText: 'Your Message...',
                                     ),
-                                  )
-                              ),
-
-                              SizedBox(width: 10.w,),
-
-                              // Send Button
-                              Column(
-                                children: [
-                                  MaterialButton(
-                                    onPressed: (){
-                                      if(messageController.text == '')
+                                    minLines: 1,
+                                    controller: messageController,
+                                    maxLines: 5,
+                                    onTap: () {
+                                      if(cubit.emojiIsNotVisible == false)
                                       {
-                                        errorMsg('Please type Something');
-                                      }
-                                      else
-                                      {
-                                        cubit.sendMessage(messageController.text, receiver.id);
-                                        messageController.text = '';
+                                        cubit.changeEmojiVisibility();
                                       }
                                     },
-                                    elevation: 5,
-                                    highlightColor: Colors.blue[300],
-                                    padding: EdgeInsets.zero,
-                                    color: blue,
-                                    shape: CircleBorder(),
-                                    minWidth: 40.sp,
-                                    child: Padding(
-                                      padding: EdgeInsets.all(10.0.sp),
-                                      child: Icon(
-                                        CupertinoIcons.paperplane_fill,
-                                        color: Colors.white,
-                                        size: 25.sp,
-                                      ),
+                                  ),
+                                )
+                            ),
+
+                            SizedBox(width: 10.w,),
+
+                            // Send Button
+                            Column(
+                              children: [
+                                MaterialButton(
+                                  onPressed: (){
+                                    if(messageController.text == '')
+                                    {
+                                      errorMsg('Please type Something');
+                                    }
+                                    else
+                                    {
+                                      cubit.sendMessage(messageController.text, receiver.id);
+                                      messageController.text = '';
+                                    }
+                                  },
+                                  elevation: 5,
+                                  highlightColor: Colors.blue[300],
+                                  padding: EdgeInsets.zero,
+                                  color: blue,
+                                  shape: CircleBorder(),
+                                  minWidth: 40.sp,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(10.0.sp),
+                                    child: Icon(
+                                      CupertinoIcons.paperplane_fill,
+                                      color: Colors.white,
+                                      size: 25.sp,
                                     ),
                                   ),
-                                  SizedBox(height: 1.h,),
-                                ],
-                              )
-                            ],
-                          ),
+                                ),
+                                SizedBox(height: 1.h,),
+                              ],
+                            )
+                          ],
                         ),
                       ),
 

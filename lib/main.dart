@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
       create: (context) => AppCubit()..getUserData()..getPosts()..getProfilePosts()..getAllUsers(),
       child: ScreenUtilInit(
         designSize: const Size(360, 690),
+        useInheritedMediaQuery: true,
         minTextAdapt: true,
         splitScreenMode: true,
         builder: (context, child) => MaterialApp(

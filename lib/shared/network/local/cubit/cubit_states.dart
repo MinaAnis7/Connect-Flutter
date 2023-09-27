@@ -84,3 +84,5 @@ class SendMessageSuccessState extends AppStates {}
 class SendMessageErrorState extends AppStates {}
 
 class GetMessagesState extends AppStates {}
+
+class ChangeCommentImageState extends AppStates {}

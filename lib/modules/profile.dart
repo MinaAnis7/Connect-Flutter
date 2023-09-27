@@ -553,7 +553,7 @@ class Profile extends StatelessWidget {
             ),
 
             // Image
-            if (post.postImage!.isNotEmpty)
+            if (post.postImage != null)
               Container(
                 constraints: BoxConstraints(
                   maxHeight: MediaQuery.of(context).size.height / 2,

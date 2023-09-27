@@ -398,6 +398,36 @@ class AppCubit extends Cubit<AppStates> {
         emit(CreatePostErrorState());
       });
     }
+    else
+      {
+        FirebaseFirestore.instance
+            .collection('posts')
+            .add(postModel!.toMap())
+            .then((value) {
+          FirebaseFirestore.instance.collection('users').doc(userModel?.id)
+              .collection('posts')
+              .doc(value.id)
+              .set({'post' : value});
+          postImage = null;
+          postModel?.postId = value.id;
+          FirebaseFirestore.instance
+              .collection('posts')
+              .doc(value.id)
+              .update(postModel!.toMap());
+          getPosts();
+          getProfilePosts();
+          Fluttertoast.showToast(
+            msg: 'Post Created.',
+            backgroundColor: Colors.green,
+            fontSize: 14.sp,
+          );
+          Navigator.pop(context);
+          emit(CreatePostSuccessState());
+        }).catchError((error) {
+          errorMsg(error);
+          emit(CreatePostErrorState());
+        });
+      }
   }
 
   String dateFormat(DateTime date) {
@@ -495,7 +525,9 @@ class AppCubit extends Cubit<AppStates> {
   Future<bool> getPosts() {
     emit(GetPostsLoadingState());
     posts = [];
-    FirebaseFirestore.instance.collection('posts').get().then((value) {
+    FirebaseFirestore.instance.collection('posts')
+        .orderBy('dateTime', descending: true)
+        .get().then((value) {
       value.docs.forEach((element) {
         posts.add(PostModel.fromJson(element.data()));
       });
@@ -513,7 +545,6 @@ class AppCubit extends Cubit<AppStates> {
   List<PostModel> profilePosts = [];
 
   void getProfilePosts() {
-    print("start");
     profilePosts = [];
     FirebaseFirestore.instance
     .collection('users')
@@ -521,15 +552,12 @@ class AppCubit extends Cubit<AppStates> {
     .collection('posts')
     .get()
     .then((value) {
-      print("before foreach");
-      print(value);
       value.docs.forEach((doc) {
        DocumentReference docRef = doc.data()['post'];
        docRef.get().then((value) {
          profilePosts.add(PostModel.fromJson(value.data() as Map<String, dynamic>));
          emit(GetProfilePostsState());
        });
-       print("after foreach");
       });
     })
     .catchError((error){
@@ -537,7 +565,6 @@ class AppCubit extends Cubit<AppStates> {
       print(error.toString());
       emit(GetPostsErrorState());
     });
-
   }
 
 //#endregion
@@ -679,6 +706,11 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
+  void changeCommentImageState()
+  {
+    emit(ChangeCommentImageState());
+  }
+
   //#endregion
 
   //#region Get All Users
@@ -797,5 +829,6 @@ class AppCubit extends Cubit<AppStates> {
   }
 
   //#endregion
+
 
 }

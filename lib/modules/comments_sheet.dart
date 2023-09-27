@@ -26,8 +26,11 @@ class CommentsSheet extends StatelessWidget
         listener: (context, state) {},
         builder: (context, state) {
           AppCubit cubit = AppCubit.get(context);
-
+          commentFocus.addListener(() {
+            cubit.changeCommentImageState();
+          });
           return Scaffold(
+            resizeToAvoidBottomInset: true,
             appBar: AppBar(
               systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: superBabyBlue),
               leading: IconButton(
@@ -52,7 +55,10 @@ class CommentsSheet extends StatelessWidget
             ),
             backgroundColor: superBabyBlue,
             body: GestureDetector(
-              onTap: () => commentFocus.unfocus(),
+              onTap: () {
+                commentFocus.unfocus();
+                cubit.changeCommentImageState();
+              },
               child: StatefulBuilder(
                 builder: (context, setState) => Container(
                   width: double.infinity,
@@ -115,7 +121,8 @@ class CommentsSheet extends StatelessWidget
                                 bottom: MediaQuery
                                     .of(context)
                                     .viewInsets
-                                    .bottom),
+                                    .bottom,
+                            ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -131,9 +138,9 @@ class CommentsSheet extends StatelessWidget
 
                                 // TFF
                                 Expanded(
-                                  child: defaultTFF(
+                                  child: TFF_NoSuffix(
                                       hintText:
-                                      'Write your comment...',
+                                      'Write a comment...',
                                       keyboardType:
                                       TextInputType.text,
                                       controller:
@@ -147,10 +154,11 @@ class CommentsSheet extends StatelessWidget
                                             value == '') {
                                           return 'Please, Type Something';
                                         }
+                                        return null;
                                       }),
                                 ),
 
-                                SizedBox(width: 10.h),
+                                SizedBox(width: 10.w),
 
                                 // Post a Comment
                                 TextButton(

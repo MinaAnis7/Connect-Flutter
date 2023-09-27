@@ -91,6 +91,70 @@ Widget defaultTFF({
   );
 }
 
+Widget TFF_NoSuffix({
+  required String hintText,
+  required TextInputType keyboardType,
+  Widget? prefixIcon,
+  bool isObscure = false,
+  TextEditingController? controller,
+  String? Function(String?)? validator,
+  Color? color,
+  FocusNode? focus,
+  int? maxLines,
+  Function()? onTap,
+  Function(String)? onFieldSubmitted,
+  int? minLines,
+  Function(String)? onChanged,
+}) {
+  return BlocConsumer<AppCubit, AppStates>(
+    listener: (context, state) {},
+    builder: (context, state) {
+      return TextFormField(
+        keyboardType: keyboardType,
+        controller: controller,
+        focusNode: focus,
+        maxLines: maxLines,
+        minLines: minLines,
+        onTap: onTap,
+        onFieldSubmitted: onFieldSubmitted,
+        onChanged: onChanged,
+        validator: validator,
+        obscureText: isObscure,
+        style: TextStyle(color: black, fontSize: 15.sp),
+        decoration: InputDecoration(
+          prefixIcon: prefixIcon,
+          isDense: true,
+          fillColor: color ?? superBabyBlue,
+          filled: true,
+          hintText: hintText,
+          hintStyle: TextStyle(color: Colors.black54),
+          focusColor: blue,
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20.0.sp),
+            borderSide: BorderSide(color: babyBlue, width: 0.0),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(style: BorderStyle.none),
+            borderRadius: BorderRadius.circular(20.0.sp),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(style: BorderStyle.none),
+            borderRadius: BorderRadius.circular(20.0.sp),
+          ),
+          disabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(style: BorderStyle.none),
+            borderRadius: BorderRadius.circular(20.0.sp),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(style: BorderStyle.none),
+            borderRadius: BorderRadius.circular(20.0.sp),
+          ),
+        ),
+      );
+    },
+  );
+}
+
 //#endregion
 
 //#region My Button
