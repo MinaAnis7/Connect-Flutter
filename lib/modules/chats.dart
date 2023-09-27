@@ -20,57 +20,66 @@ class Chats extends StatelessWidget {
         AppCubit cubit = AppCubit.get(context);
 
         return Scaffold(
-          body: ConditionalBuilder(
-            condition: cubit.allUsers.length != 0,
-            builder: (context) => ConditionalBuilder(
-              condition: state is! GetAllUsersLoadingState,
-              builder: (context) => SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
-                child: Column(
-                  children: [
-                    SizedBox(height: 5.h,),
+          body: GestureDetector(
+            onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
+            child: ConditionalBuilder(
+              condition: cubit.allUsers.length != 0,
+              builder: (context) => ConditionalBuilder(
+                condition: state is! GetAllUsersLoadingState,
+                builder: (context) => SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 5.h,),
 
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15.w),
-                      child: TextFormField(
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30.sp),
-                            borderSide: BorderSide.none
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15.w),
+                        child: TextFormField(
+                          maxLines: 1,
+                          style: TextStyle(
+                            fontSize: 14.sp,
                           ),
-                          hintText: 'Search',
-                          filled: true,
-                          fillColor: Colors.white,
-                          prefixIcon: Icon(CupertinoIcons.search),
+                          decoration: InputDecoration(
+                            // This is giving me the responsive property,
+                            // based on text and Icon size
+                            isDense: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.sp),
+                              borderSide: BorderSide.none
+                            ),
+                            hintText: 'Search',
+                            filled: true,
+                            fillColor: Colors.white,
+                            prefixIcon: Icon(CupertinoIcons.search, size: 20.sp,),
+                          ),
                         ),
                       ),
-                    ),
 
-                    SizedBox(height: 5.h,),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.w),
-                      child: ListView.separated(
-                        physics: NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) => chatItemBuilder(cubit.allUsers[index], context),
-                        separatorBuilder:(context, index) => separator,
-                        itemCount: cubit.allUsers.length,
-                        shrinkWrap: true,
+                      SizedBox(height: 5.h,),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.w),
+                        child: ListView.separated(
+                          physics: NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) => chatItemBuilder(cubit.allUsers[index], context),
+                          separatorBuilder:(context, index) => separator,
+                          itemCount: cubit.allUsers.length,
+                          shrinkWrap: true,
+                        ),
                       ),
-                    ),
 
-                    SizedBox(height: 10.h,),
-                  ],
+                      SizedBox(height: 10.h,),
+                    ],
+                  ),
                 ),
+                fallback: (context) => Center(child: CircularProgressIndicator(color: blue,),),
               ),
-              fallback: (context) => Center(child: CircularProgressIndicator(color: blue,),),
-            ),
-            fallback: (context) => Center(
-              child: Text(
-                'No Users.',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 15.sp,
+              fallback: (context) => Center(
+                child: Text(
+                  'No Users.',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 15.sp,
+                  ),
                 ),
               ),
             ),
@@ -115,7 +124,7 @@ class Chats extends StatelessWidget {
                       user.name,
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 16.sp,
+                          fontSize: 15.sp,
                           color: Colors.black,
                           overflow: TextOverflow.ellipsis),
                       maxLines: 1,
@@ -127,7 +136,7 @@ class Chats extends StatelessWidget {
                       user.bio,
                       style: TextStyle(
                         color: Colors.grey,
-                        fontSize: 15.sp,
+                        fontSize: 13.5.sp,
                         overflow: TextOverflow.ellipsis,
                       ),
                       maxLines: 1,

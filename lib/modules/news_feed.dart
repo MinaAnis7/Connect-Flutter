@@ -19,7 +19,7 @@ import 'package:social_app/shared/style/icons/my_icons_icons.dart';
 import '../shared/network/local/cubit/cubit.dart';
 
 class NewsFeed extends StatelessWidget {
-  TextEditingController tagsController = TextEditingController();
+  final TextEditingController tagsController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -614,7 +614,7 @@ class NewsFeed extends StatelessWidget {
                                     Icon(
                                       MyIcons.heart,
                                       color: Colors.red,
-                                      size: 22.sp,
+                                      size: 21.sp,
                                     ),
                                     SizedBox(
                                       width: 5.w,
@@ -624,7 +624,7 @@ class NewsFeed extends StatelessWidget {
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.red,
-                                        fontSize: 14.sp
+                                        fontSize: 13.sp
                                       ),
                                     ),
                                   ],
@@ -638,11 +638,11 @@ class NewsFeed extends StatelessWidget {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(MyIcons.heart, size: 22.sp,),
+                                    Icon(MyIcons.heart, size: 21.sp,),
                                     SizedBox(
                                       width: 5.w,
                                     ),
-                                    Text('Love', style: TextStyle(fontSize: 14.sp),),
+                                    Text('Love', style: TextStyle(fontSize: 13.sp),),
                                   ],
                                 ),
                               );
@@ -651,11 +651,11 @@ class NewsFeed extends StatelessWidget {
                             return Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(MyIcons.heart, size: 22.sp,),
+                                Icon(MyIcons.heart, size: 21.sp,),
                                 SizedBox(
                                   width: 5.w,
                                 ),
-                                Text('Love', style: TextStyle(fontSize: 14.sp)),
+                                Text('Love', style: TextStyle(fontSize: 13.sp)),
                               ],
                             );
                           }
@@ -673,11 +673,11 @@ class NewsFeed extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(MyIcons.comment, size: 22.sp,),
+                          Icon(MyIcons.comment, size: 21.sp,),
                           SizedBox(
                             width: 5.w,
                           ),
-                          Text('Comment', style: TextStyle(fontSize: 14.sp)),
+                          Text('Comment', style: TextStyle(fontSize: 13.sp)),
                         ],
                       ),
                     ),

@@ -40,187 +40,190 @@ class LoginScreen extends StatelessWidget {
             title: logo,
           ),
           backgroundColor: Colors.white,
-          body: Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 20.0.w),
-            child: Form(
-              key: formKey,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      physics: BouncingScrollPhysics(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 20.0.h,
-                          ),
-                          Text(
-                            'Login',
-                            style: TextStyle(
-                              color: black,
-                              fontSize: 36.0.sp,
-                              fontWeight: FontWeight.w700,
+          body: GestureDetector(
+            onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 20.0.w),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        physics: BouncingScrollPhysics(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 20.0.h,
                             ),
-                          ),
-                          SizedBox(
-                            height: 10.0.sp,
-                          ),
-                          Text(
-                            'Connect With Those You Love!',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 15.0.sp,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 40.0.sp,
-                          ),
-                          defaultTFF(
-                              hintText: 'Email',
-                              maxLines: 1,
-                              keyboardType: TextInputType.emailAddress,
-                              prefixIcon: Icon(Icons.alternate_email),
-                              controller: emailController,
-                              validator: (value) {
-                                if (value != null && value == '')
-                                  return 'Email is required';
-                              }),
-                          SizedBox(
-                            height: 20.0.sp,
-                          ),
-                          defaultTFF(
-                              hintText: 'password',
-                              maxLines: 1,
-                              suffixIcon: cubit.obscureIcon,
-                              isObscure: cubit.isObscure,
-                              suffixOnPressed: () {
-                                cubit.changeVisibility();
-                              },
-                              keyboardType: TextInputType.text,
-                              prefixIcon: Icon(Icons.lock_rounded),
-                              controller: passwordController,
-                              validator: (value) {
-                                if (value != null && value == '')
-                                  return 'Password is required';
-                              }),
-                          SizedBox(
-                            height: 20.0.sp,
-                          ),
-                          ConditionalBuilder(
-                            condition: state is! UserLoginLoadingState,
-                            builder: (context) => defaultButton(
-                              color: blue,
-                              highlightColor: Colors.lightBlue,
-                              onPressed: () {
-                                if (formKey.currentState!.validate()) {
-                                  cubit.userLogin(
-                                    emailController.text,
-                                    passwordController.text,
-                                  );
-                                }
-                              },
-                              child: Text(
-                                'login'.toUpperCase(),
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 15.0.sp),
+                            Text(
+                              'Login',
+                              style: TextStyle(
+                                color: black,
+                                fontSize: 30.0.sp,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
-                            fallback:(context) =>  Center(
-                              child: CircularProgressIndicator(
+                            SizedBox(
+                              height: 10.0.sp,
+                            ),
+                            Text(
+                              'Connect With Those You Love!',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14.0.sp,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 40.0.sp,
+                            ),
+                            defaultTFF(
+                                hintText: 'Email',
+                                maxLines: 1,
+                                keyboardType: TextInputType.emailAddress,
+                                prefixIcon: Icon(Icons.alternate_email, size: 20.sp,),
+                                controller: emailController,
+                                validator: (value) {
+                                  if (value != null && value == '')
+                                    return 'Email is required';
+                                }),
+                            SizedBox(
+                              height: 20.0.sp,
+                            ),
+                            defaultTFF(
+                                hintText: 'password',
+                                maxLines: 1,
+                                suffixIcon: cubit.obscureIcon,
+                                isObscure: cubit.isObscure,
+                                suffixOnPressed: () {
+                                  cubit.changeVisibility();
+                                },
+                                keyboardType: TextInputType.text,
+                                prefixIcon: Icon(Icons.lock_rounded, size: 20.sp,),
+                                controller: passwordController,
+                                validator: (value) {
+                                  if (value != null && value == '')
+                                    return 'Password is required';
+                                }),
+                            SizedBox(
+                              height: 20.0.sp,
+                            ),
+                            ConditionalBuilder(
+                              condition: state is! UserLoginLoadingState,
+                              builder: (context) => defaultButton(
                                 color: blue,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 20.0.sp),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  height: 1.0.sp,
-                                  color: Colors.grey,
+                                highlightColor: Colors.lightBlue,
+                                onPressed: () {
+                                  if (formKey.currentState!.validate()) {
+                                    cubit.userLogin(
+                                      emailController.text,
+                                      passwordController.text,
+                                    );
+                                  }
+                                },
+                                child: Text(
+                                  'login'.toUpperCase(),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 15.0.sp),
                                 ),
                               ),
-                              Padding(
-                                padding:
-                                    EdgeInsets.symmetric(horizontal: 10.0.w),
-                                child: Text(
-                                  'OR',
-                                  style: TextStyle(
+                              fallback:(context) =>  Center(
+                                child: CircularProgressIndicator(
+                                  color: blue,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 20.0.sp),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    height: 1.0.sp,
                                     color: Colors.grey,
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                child: Container(
-                                  height: 1.0.sp,
-                                  color: Colors.grey,
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 10.0.w),
+                                  child: Text(
+                                    'OR',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 20.0.sp),
-                          defaultButton(
-                            onPressed: () {},
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  'assets/google-logo-9808.png',
-                                  width: 23.h,
-                                  height: 23.h,
-                                ),
-                                SizedBox(
-                                  width: 10.0.w,
-                                ),
-                                Text(
-                                  'Login With Google',
-                                  style: TextStyle(
-                                    color: black,
-                                    fontSize: 15.0.sp,
-                                    fontWeight: FontWeight.w600,
+                                Expanded(
+                                  child: Container(
+                                    height: 1.0.sp,
+                                    color: Colors.grey,
                                   ),
                                 ),
                               ],
                             ),
-                            color: superBabyBlue,
-                          ),
-                        ],
+                            SizedBox(height: 20.0.sp),
+                            defaultButton(
+                              onPressed: () {},
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    'assets/google-logo-9808.png',
+                                    width: 23.h,
+                                    height: 23.h,
+                                  ),
+                                  SizedBox(
+                                    width: 10.0.w,
+                                  ),
+                                  Text(
+                                    'Login With Google',
+                                    style: TextStyle(
+                                      color: black,
+                                      fontSize: 15.0.sp,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              color: superBabyBlue,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Don't have an account?",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14.0.sp,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 5.0.w,
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          navigateTo(
-                            context: context,
-                            widget: SignUpScreen(),
-                          );
-                        },
-                        child: Text(
-                          'Register Now',
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Don't have an account?",
                           style: TextStyle(
-                              fontSize: 14.0.sp, fontWeight: FontWeight.w700),
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14.0.sp,
+                          ),
                         ),
-                      ),
-                    ],
-                  )
-                ],
+                        SizedBox(
+                          width: 5.0.w,
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            navigateTo(
+                              context: context,
+                              widget: SignUpScreen(),
+                            );
+                          },
+                          child: Text(
+                            'Register Now',
+                            style: TextStyle(
+                                fontSize: 14.0.sp, fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),

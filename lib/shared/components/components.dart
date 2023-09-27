@@ -16,7 +16,7 @@ Widget logo = Center(
     style: TextStyle(
       fontFamily: 'Pacifico',
       color: blue,
-      fontSize: 22.0.sp,
+      fontSize: 24.0.sp,
       fontWeight: FontWeight.w700,
     ),
   ),
@@ -52,11 +52,12 @@ Widget defaultTFF({
         onChanged: onChanged,
         validator: validator,
         obscureText: isObscure,
-        style: TextStyle(color: black),
+        style: TextStyle(color: black, fontSize: 15.sp),
         decoration: InputDecoration(
           prefixIcon: prefixIcon,
+          isDense: true,
           suffixIcon: IconButton(
-            icon: Icon(suffixIcon),
+            icon: Icon(suffixIcon, size: 20.sp,),
             onPressed: suffixOnPressed,
           ),
           fillColor: color ?? superBabyBlue,

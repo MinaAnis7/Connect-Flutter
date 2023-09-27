@@ -16,6 +16,7 @@ import 'package:social_app/shared/style/icons/my_icons_icons.dart';
 import '../shared/network/local/cubit/cubit.dart';
 
 class Profile extends StatelessWidget {
+  final tagsController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +176,7 @@ class Profile extends StatelessWidget {
                         width: double.infinity,
                         child: Card(
                           clipBehavior: Clip.hardEdge,
-                          elevation: 3,
+                          elevation: 3.0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.sp),
                           ),
@@ -186,7 +187,8 @@ class Profile extends StatelessWidget {
                               // Image and text
                               InkWell(
                                 onTap: () {
-                                  navigateTo(context: context, widget: CreatePost());
+                                  navigateTo(
+                                      context: context, widget: CreatePost());
                                 },
                                 child: Row(
                                   children: [
@@ -194,12 +196,14 @@ class Profile extends StatelessWidget {
                                       padding: EdgeInsets.all(10.0.sp),
                                       child: ClipRRect(
                                         clipBehavior: Clip.hardEdge,
-                                        borderRadius: BorderRadius.circular(30.sp),
+                                        borderRadius:
+                                        BorderRadius.circular(30.sp),
                                         child: CircleAvatar(
                                           radius: 30.sp,
-                                          backgroundColor: Colors.white,
+                                          backgroundColor: superBabyBlue,
                                           backgroundImage: NetworkImage(
-                                              cubit.userModel!.image),
+                                            cubit.userModel!.image,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -209,7 +213,7 @@ class Profile extends StatelessWidget {
                                     Text(
                                       'Share your thoughts...',
                                       style: TextStyle(
-                                        fontSize: 15.0.sp,
+                                        fontSize: 12.9.sp,
                                         color: Colors.grey,
                                       ),
                                     ),
@@ -218,14 +222,7 @@ class Profile extends StatelessWidget {
                               ),
 
                               // Separator
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 10.0),
-                                child: Container(
-                                  height: 1.0.h,
-                                  width: double.infinity,
-                                  color: Colors.grey[300],
-                                ),
-                              ),
+                              separator,
 
                               //Buttons
                               Row(
@@ -237,11 +234,15 @@ class Profile extends StatelessWidget {
                                       child: InkWell(
                                         onTap: () {
                                           cubit.addPostImage();
-                                          navigateTo(context: context, widget: CreatePost());
+                                          navigateTo(
+                                              context: context,
+                                              widget: CreatePost());
                                         },
-                                        borderRadius: BorderRadius.circular(5.sp),
+                                        borderRadius:
+                                        BorderRadius.circular(5.sp),
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                           children: [
                                             Icon(
                                               MyIcons.camera,
@@ -254,7 +255,7 @@ class Profile extends StatelessWidget {
                                             Text(
                                               'Image',
                                               style: TextStyle(
-                                                  fontSize: 14.sp,
+                                                  fontSize: 12.sp,
                                                   color: Colors.grey),
                                             ),
                                           ],
@@ -267,10 +268,71 @@ class Profile extends StatelessWidget {
                                     child: Padding(
                                       padding: EdgeInsets.all(8.0.sp),
                                       child: InkWell(
-                                        borderRadius: BorderRadius.circular(5.sp),
-                                        onTap: () {},
+                                        borderRadius:
+                                        BorderRadius.circular(5.sp),
+                                        onTap: () {
+                                          navigateTo(
+                                              context: context,
+                                              widget: CreatePost());
+                                          showModalBottomSheet(
+                                            context: context,
+                                            builder: (context) {
+                                              return Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 10.w),
+                                                child: Column(
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: TextFormField(
+                                                            controller:
+                                                            tagsController,
+                                                            decoration:
+                                                            InputDecoration(
+                                                              hintText:
+                                                              'Add a Tag',
+                                                              border:
+                                                              InputBorder
+                                                                  .none,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            cubit.addTag(
+                                                                tagsController
+                                                                    .text);
+                                                            tagsController
+                                                                .text = '';
+                                                          },
+                                                          style: TextButton
+                                                              .styleFrom(
+                                                              backgroundColor:
+                                                              blue,
+                                                              shape:
+                                                              RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                BorderRadius.circular(
+                                                                    10.sp),
+                                                              )),
+                                                          child: FaIcon(
+                                                            FontAwesomeIcons
+                                                                .plus,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                           children: [
                                             Icon(
                                               MyIcons.tag,
@@ -283,7 +345,7 @@ class Profile extends StatelessWidget {
                                             Text(
                                               'Tags',
                                               style: TextStyle(
-                                                  fontSize: 14.sp,
+                                                  fontSize: 12.sp,
                                                   color: Colors.grey),
                                             ),
                                           ],
@@ -291,15 +353,16 @@ class Profile extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  // Documents
                                   Expanded(
                                     child: Padding(
                                       padding: EdgeInsets.all(8.0.sp),
                                       child: InkWell(
-                                        borderRadius: BorderRadius.circular(5.sp),
+                                        borderRadius:
+                                        BorderRadius.circular(5.sp),
                                         onTap: () {},
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                           children: [
                                             Icon(
                                               MyIcons.doc,
@@ -412,7 +475,7 @@ class Profile extends StatelessWidget {
                       Text(
                         post.name,
                         style: TextStyle(
-                          fontSize: 15.sp,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -420,7 +483,7 @@ class Profile extends StatelessWidget {
                       Text(
                         post.dateTime,
                         style: TextStyle(
-                          fontSize: 12.9.sp,
+                          fontSize: 12.sp,
                           color: Colors.grey,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -432,7 +495,7 @@ class Profile extends StatelessWidget {
                 // Post options
                 IconButton(
                   onPressed: () {},
-                  icon: FaIcon(FontAwesomeIcons.ellipsis),
+                  icon: FaIcon(FontAwesomeIcons.ellipsis, size: 20.sp,),
                 ),
 
                 SizedBox(
@@ -522,13 +585,14 @@ class Profile extends StatelessWidget {
                         Icon(
                           MyIcons.heart,
                           color: Colors.red,
+                          size: 20.sp,
                         ),
                         SizedBox(
                           width: 5.w,
                         ),
                         Text(
                           '${post.numOfLikes}',
-                          style: TextStyle(color: Colors.red),
+                          style: TextStyle(color: Colors.red, fontSize: 13.sp),
                         ),
                       ],
                     ),
@@ -540,6 +604,7 @@ class Profile extends StatelessWidget {
                       Icon(
                         MyIcons.comment,
                         color: blue,
+                        size: 20.sp,
                       ),
                       SizedBox(
                         width: 5.w,
@@ -548,6 +613,7 @@ class Profile extends StatelessWidget {
                         '${post.numOfComments}',
                         style: TextStyle(
                           color: blue,
+                          fontSize: 13.sp
                         ),
                       ),
                     ],
@@ -593,6 +659,7 @@ class Profile extends StatelessWidget {
                                     Icon(
                                       MyIcons.heart,
                                       color: Colors.red,
+                                      size: 21.sp,
                                     ),
                                     SizedBox(
                                       width: 5.w,
@@ -602,6 +669,7 @@ class Profile extends StatelessWidget {
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.red,
+                                        fontSize: 13.sp
                                       ),
                                     ),
                                   ],
@@ -615,11 +683,11 @@ class Profile extends StatelessWidget {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(MyIcons.heart),
+                                    Icon(MyIcons.heart, size: 21.sp,),
                                     SizedBox(
                                       width: 5.w,
                                     ),
-                                    Text('Love'),
+                                    Text('Love', style: TextStyle(fontSize: 13.sp),),
                                   ],
                                 ),
                               );
@@ -628,11 +696,11 @@ class Profile extends StatelessWidget {
                             return Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(MyIcons.heart),
+                                Icon(MyIcons.heart, size: 21.sp,),
                                 SizedBox(
                                   width: 5.w,
                                 ),
-                                Text('Love'),
+                                Text('Love', style: TextStyle(fontSize: 13.sp)),
                               ],
                             );
                           }
@@ -650,11 +718,11 @@ class Profile extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(MyIcons.comment),
+                          Icon(MyIcons.comment, size: 21.sp,),
                           SizedBox(
                             width: 5.w,
                           ),
-                          Text('Comment'),
+                          Text('Comment', style: TextStyle(fontSize: 13.sp)),
                         ],
                       ),
                     ),

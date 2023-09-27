@@ -60,7 +60,7 @@ class EditProfile extends StatelessWidget {
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
-                    fontSize: 22.0.sp),
+                    fontSize: 20.0.sp),
               ),
               actions: [
                 TextButton(

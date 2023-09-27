@@ -32,6 +32,7 @@ class Layout extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   fontSize: 18.0.sp),
             ),
+            centerTitle: true,
             actions: [
               IconButton(
                 onPressed: () {},

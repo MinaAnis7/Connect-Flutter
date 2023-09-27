@@ -9,8 +9,8 @@ import '../shared/style/colors.dart';
 import '../shared/style/icons/my_icons_icons.dart';
 
 class CreatePost extends StatelessWidget {
-  TextEditingController postTextController = TextEditingController();
-  TextEditingController tagsController = TextEditingController();
+  final TextEditingController postTextController = TextEditingController();
+  final TextEditingController tagsController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,7 @@ class CreatePost extends StatelessWidget {
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
-                    fontSize: 22.0.sp),
+                    fontSize: 20.0.sp),
               ),
               actions: [
                 TextButton(
