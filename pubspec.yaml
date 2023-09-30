@@ -54,6 +54,8 @@ dependencies:
   path_provider: ^2.0.15
   page_transition: ^2.0.9
   emoji_picker_flutter: ^1.6.1
+  intl: ^0.18.1
+  firebase_messaging: ^14.6.8
 
 dev_dependencies:
   flutter_test:

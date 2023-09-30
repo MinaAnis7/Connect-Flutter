@@ -30,40 +30,60 @@ class Chats extends StatelessWidget {
                   physics: BouncingScrollPhysics(),
                   child: Column(
                     children: [
-                      SizedBox(height: 5.h,),
+                      SizedBox(height: 15.h,),
 
+                      // Search for chats
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 15.w),
-                        child: TextFormField(
-                          maxLines: 1,
-                          style: TextStyle(
-                            fontSize: 14.sp,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30.sp),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.shade400,
+                                blurRadius: 7,
+                                offset: Offset(0, 0),
+                              ),
+                            ],
                           ),
-                          decoration: InputDecoration(
-                            // This is giving me the responsive property,
-                            // based on text and Icon size
-                            isDense: true,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30.sp),
-                              borderSide: BorderSide.none
+                          child: TextFormField(
+                            maxLines: 1,
+                            style: TextStyle(
+                              fontSize: 14.sp,
                             ),
-                            hintText: 'Search',
-                            filled: true,
-                            fillColor: Colors.white,
-                            prefixIcon: Icon(CupertinoIcons.search, size: 20.sp,),
+                            decoration: InputDecoration(
+                              // This is giving me the responsive property,
+                              // based on text and Icon size
+                              isDense: true,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.sp),
+                                borderSide: BorderSide.none,
+                              ),
+                              hintText: 'Search',
+                              filled: true,
+                              fillColor: Colors.white,
+                              prefixIcon: Icon(CupertinoIcons.search, size: 20.sp,),
+                            ),
                           ),
                         ),
                       ),
 
-                      SizedBox(height: 5.h,),
+                      SizedBox(height: 15.h,),
+
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.w),
-                        child: ListView.separated(
-                          physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) => chatItemBuilder(cubit.allUsers[index], context),
-                          separatorBuilder:(context, index) => separator,
-                          itemCount: cubit.allUsers.length,
-                          shrinkWrap: true,
+                        padding: EdgeInsets.symmetric(horizontal: 15.w),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(13.sp),
+                          ),
+                          child: ListView.separated(
+                            physics: NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) => chatItemBuilder(cubit.allUsers[index], context),
+                            separatorBuilder:(context, index) => separator,
+                            itemCount: cubit.allUsers.length,
+                            shrinkWrap: true,
+                          ),
                         ),
                       ),
 
@@ -91,7 +111,7 @@ class Chats extends StatelessWidget {
 
   Widget chatItemBuilder(UserModel user, BuildContext context) {
     return Material(
-      color: superBabyBlue,
+      color: Colors.transparent,
       borderRadius: BorderRadius.circular(13.5.sp),
       clipBehavior: Clip.hardEdge,
       child: InkWell(
@@ -100,8 +120,8 @@ class Chats extends StatelessWidget {
               PageTransition(type: PageTransitionType.rightToLeft,
                   child: ChatRoom(user)));
         },
-        splashColor: Colors.white,
-        highlightColor: Colors.white,
+        splashColor: Colors.grey.shade50,
+        highlightColor: Colors.grey.shade50,
         child: Container(
           padding: EdgeInsets.all(12.5.sp),
           child: Row(

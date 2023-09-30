@@ -344,7 +344,6 @@ class AppCubit extends Cubit<AppStates> {
       uid: userModel!.id,
       name: userModel!.name,
       text: text,
-      dateTime: dateFormat(DateTime.now()),
       profilePicture: userModel!.image,
     );
 
@@ -371,6 +370,7 @@ class AppCubit extends Cubit<AppStates> {
                 .set({'post' : value});
             postImage = null;
             postModel?.postId = value.id;
+
             FirebaseFirestore.instance
                 .collection('posts')
                 .doc(value.id)
@@ -413,16 +413,18 @@ class AppCubit extends Cubit<AppStates> {
           FirebaseFirestore.instance
               .collection('posts')
               .doc(value.id)
-              .update(postModel!.toMap());
-          getPosts();
-          getProfilePosts();
-          Fluttertoast.showToast(
-            msg: 'Post Created.',
-            backgroundColor: Colors.green,
-            fontSize: 14.sp,
-          );
-          Navigator.pop(context);
-          emit(CreatePostSuccessState());
+              .update(postModel!.toMap()).then((value) {
+            getPosts();
+            getProfilePosts();
+            Fluttertoast.showToast(
+              msg: 'Post Created.',
+              backgroundColor: Colors.green,
+              fontSize: 14.sp,
+            );
+            Navigator.pop(context);
+            emit(CreatePostSuccessState());
+          });
+
         }).catchError((error) {
           errorMsg(error);
           emit(CreatePostErrorState());
@@ -489,7 +491,7 @@ class AppCubit extends Cubit<AppStates> {
         icon: Icon(
           MyIcons.users,
         ),
-        label: 'Friends'),
+        label: 'Connections'),
     BottomNavigationBarItem(
         icon: Icon(
           MyIcons.user_1,
@@ -507,13 +509,13 @@ class AppCubit extends Cubit<AppStates> {
   List<Widget> screens = [
     NewsFeed(),
     Chats(),
-    Friends(),
+    Connections(),
     Profile(),
   ];
   List<String> titles = [
     'News Feed',
     'Chats',
-    'Friends',
+    'Connections',
     'Profile',
   ];
 
@@ -530,6 +532,7 @@ class AppCubit extends Cubit<AppStates> {
         .get().then((value) {
       value.docs.forEach((element) {
         posts.add(PostModel.fromJson(element.data()));
+        print(element);
       });
       emit(GetPostsSuccessState());
       return Future.value(true);

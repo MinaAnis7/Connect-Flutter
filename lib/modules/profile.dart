@@ -481,7 +481,7 @@ class Profile extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        post.dateTime,
+                        '${post.dateTime}',
                         style: TextStyle(
                           fontSize: 12.sp,
                           color: Colors.grey,
