@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:social_app/modules/notification_screen.dart';
 import 'package:social_app/modules/settings.dart';
 import 'package:social_app/shared/components/components.dart';
 import 'package:social_app/shared/network/local/cubit/cubit.dart';
@@ -35,10 +36,24 @@ class Layout extends StatelessWidget {
             centerTitle: true,
             actions: [
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context,
+                  PageTransition(
+                      type: PageTransitionType.topToBottom,
+                      child: NotificationScreen(),
+                  ),
+                  );
+                },
                 padding: EdgeInsets.zero,
-                icon: FaIcon(FontAwesomeIcons.bell, size: 20.sp,),
+                icon: Badge(
+                  label: Text(
+                    "${cubit.notifications.length}"
+                  ),
+                  isLabelVisible: cubit.notifications.isNotEmpty,
+                  child: FaIcon(FontAwesomeIcons.bell, size: 20.sp,),
+                ),
               ),
+              
               if (cubit.currentIndex == 3)
                 IconButton(
                   onPressed: () {

@@ -25,7 +25,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AppCubit()..getUserData()..getPosts()..getProfilePosts()..getAllUsers(),
+      create: (context) => AppCubit()..getUserData()..getPosts()
+        ..getProfilePosts()..getAllUsers()..getNotifications(),
       child: ScreenUtilInit(
         designSize: const Size(360, 690),
         useInheritedMediaQuery: true,

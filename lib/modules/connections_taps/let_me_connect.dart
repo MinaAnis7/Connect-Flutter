@@ -67,6 +67,8 @@ class LetMeConnect extends StatelessWidget {
   }
 
   Widget connectionItemBuilder(UserModel user, BuildContext context) {
+    AppCubit cubit = AppCubit.get(context);
+
     return Material(
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(13.5.sp),
@@ -131,12 +133,16 @@ class LetMeConnect extends StatelessWidget {
 
             // Connect Button
             MaterialButton(
-              onPressed: () {},
+              onPressed: () {
+                cubit.sendConnectionRequest(user);
+                msg("Connection request was sent Successfully!");
+              },
               child: Text(
                 "Connect",
                 style: TextStyle(
                   fontFamily: 'Pacifico',
                   color: Colors.white,
+                  fontWeight: FontWeight.bold
                 ),
               ),
               color: blue,

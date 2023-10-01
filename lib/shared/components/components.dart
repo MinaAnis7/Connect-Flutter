@@ -238,12 +238,21 @@ void toastDF({
 
 //#endregion
 
-//#region Error Toast
+//#region Toasts
 
 void errorMsg(String error) {
   Fluttertoast.showToast(
     msg: error,
     backgroundColor: Colors.red,
+    fontSize: 14.sp,
+    timeInSecForIosWeb: 3,
+  );
+}
+
+void msg(String msg) {
+  Fluttertoast.showToast(
+    msg: msg,
+    backgroundColor: Colors.green,
     fontSize: 14.sp,
     timeInSecForIosWeb: 3,
   );

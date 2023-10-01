@@ -86,3 +86,10 @@ class SendMessageErrorState extends AppStates {}
 class GetMessagesState extends AppStates {}
 
 class ChangeCommentImageState extends AppStates {}
+
+class GetNotificationsLoadingState extends AppStates {}
+class GetNotificationsSuccessState extends AppStates {}
+
+class AcceptConnectionSuccessState extends AppStates {}
+class AcceptConnectionLoadingState extends AppStates {}
+class AcceptConnectionErrorState extends AppStates {}

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:social_app/modules/connections_taps/my_connectios.dart';
-
-import '../shared/style/colors.dart';
 import 'connections_taps/let_me_connect.dart';
 
 class Connections extends StatefulWidget {
@@ -42,8 +39,8 @@ class _ConnectionsState extends State<Connections> with SingleTickerProviderStat
             labelColor: Colors.black,
             labelStyle: TextStyle(fontSize: 13.sp),
             tabs: [
-              Tab(text: "My Connections"),
               Tab(text: "Let Me Connect"),
+              Tab(text: "My Connections"),
             ],
           ),
         ),
@@ -52,8 +49,8 @@ class _ConnectionsState extends State<Connections> with SingleTickerProviderStat
         controller: _tabController,
         physics: BouncingScrollPhysics(),
         children: [
-          MyConnections(),
           LetMeConnect(),
+          MyConnections(),
         ],
       ),
     );

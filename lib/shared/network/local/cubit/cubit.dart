@@ -13,6 +13,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:social_app/models/comment_model.dart';
 import 'package:social_app/models/message_model.dart';
+import 'package:social_app/models/notification.dart';
 import 'package:social_app/models/user_model.dart';
 import 'package:social_app/modules/chats.dart';
 import 'package:social_app/modules/friends.dart';
@@ -72,6 +73,7 @@ class AppCubit extends Cubit<AppStates> {
       getPosts();
       getAllUsers();
       getProfilePosts();
+      getNotifications();
       if (kDebugMode) print(value.user!.email);
     }).catchError((error) {
       emit(UserRegisterErrorState());
@@ -97,6 +99,7 @@ class AppCubit extends Cubit<AppStates> {
         getPosts();
         getProfilePosts();
         getAllUsers();
+        getNotifications();
       })
           .catchError((error) {
         kDebugMode ? print(error.toString()) : null;
@@ -565,7 +568,6 @@ class AppCubit extends Cubit<AppStates> {
     })
     .catchError((error){
       errorMsg(error.toString());
-      print(error.toString());
       emit(GetPostsErrorState());
     });
   }
@@ -832,6 +834,170 @@ class AppCubit extends Cubit<AppStates> {
   }
 
   //#endregion
+
+  //#region Connections & Notifications
+  void sendConnectionRequest(UserModel userToConnect)
+  {
+    NotificationModel notification = NotificationModel(
+      type: 'connection_request',
+      user: userModel!,
+    );
+    
+    Map<String, dynamic> data = notification.toMap();
+    
+    FirebaseFirestore.instance.collection('users')
+        .doc(userToConnect.id)
+        .collection('notifications')
+        .add(data).then((value) {
+          data.addAll({'id' : value.id});
+          FirebaseFirestore.instance.collection('users')
+              .doc(userToConnect.id)
+              .collection('notifications')
+              .doc(value.id)
+              .update(data);
+    });
+  }
+
+  List<NotificationModel> notifications = [];
+
+  void getNotifications()
+  {
+    emit(GetNotificationsLoadingState());
+
+    FirebaseFirestore.instance.collection('users')
+        .doc(CacheHelper.getData('userId'))
+        .collection('notifications')
+        .snapshots()
+        .listen((event) {
+          notifications = [];
+
+          event.docs.forEach((doc) {
+            notifications.add(NotificationModel.fromJson(doc.data()));
+          });
+
+          print(notifications.toString());
+
+          emit(GetNotificationsSuccessState());
+    });
+
+  }
+
+  void rejectConnection(NotificationModel notification)
+  {
+    FirebaseFirestore.instance.collection('users')
+        .doc(userModel!.id)
+        .collection('notifications')
+        .doc(notification.id).delete().then((value) {
+          errorMsg("Connection Request Was Rejected");
+    });
+  }
+
+  void markAsRead(NotificationModel notification)
+  {
+    FirebaseFirestore.instance.collection('users')
+        .doc(userModel!.id)
+        .collection('notifications')
+        .doc(notification.id).delete();
+  }
+  
+  void acceptConnection(NotificationModel notification)
+  {
+    emit(AcceptConnectionLoadingState());
+
+    // First, add the user who sent the connection to me
+    FirebaseFirestore.instance.collection('users')
+        .doc(userModel!.id)
+        .collection('connections')
+        .doc(notification.user.id)
+        .set(
+        {'user' : FirebaseFirestore.instance.collection('users')
+            .doc(notification.user.id)}, SetOptions(merge: true))
+        .then((value) {
+          // Second, add me to the user who sent the connection
+          FirebaseFirestore.instance.collection('users')
+              .doc(notification.user.id)
+              .collection('connections')
+              .doc(userModel!.id)
+              .set({'user' : FirebaseFirestore.instance
+              .collection('users').doc(userModel!.id)}, SetOptions(merge: true)).then((value) {
+                // Third, I need to send a notification to the user
+                // To notify him/her that I accepted the request.
+                NotificationModel acceptNotification = NotificationModel(
+                    type: "connection_accept",
+                    user: userModel!,
+                );
+                FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(notification.user.id)
+                    .collection('notifications')
+                    .add(acceptNotification.toMap()).then((value) {
+                      FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(notification.user.id)
+                          .collection('notifications')
+                          .doc(value.id)
+                          .update({'id' : value.id}).then((value) {
+                            // Now, Lets increment the number of connection
+                            // for both of us
+                            FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(notification.user.id)
+                                .update({'numOfConnects' : FieldValue.increment(1)})
+                                .then((value) {
+                                  FirebaseFirestore.instance
+                                      .collection('users')
+                                      .doc(userModel!.id)
+                                      .update({'numOfConnects' : FieldValue.increment(1)})
+                                      .then((value) {
+                                        emit(AcceptConnectionSuccessState());
+                                        msg("Now, You Are Friends!");
+
+                                        // Finally, the notification
+                                        // Needs to be removed
+                                        FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(userModel!.id)
+                                        .collection('notifications')
+                                        .doc(notification.id).delete();
+                                  })
+                                      .catchError((error){
+                                        if (kDebugMode) print("1 " + error.toString());
+                                        errorMsg(error.toString());
+                                        emit(AcceptConnectionErrorState());
+                                  });
+                            })
+                                .catchError((error) {
+                              if (kDebugMode) print("2 " + error.toString());
+                                  errorMsg(error.toString());
+                                  emit(AcceptConnectionErrorState());
+                            });
+                      }).catchError((error){
+                        if (kDebugMode) print("3 " + error.toString());
+                        errorMsg(error.toString());
+                        emit(AcceptConnectionErrorState());
+                      });
+                })
+                .catchError((error) {
+                  if (kDebugMode) print("4 " + error.toString());
+                  errorMsg(error.toString());
+                  emit(AcceptConnectionErrorState());
+                });
+          })
+              .catchError((error) {
+                if (kDebugMode) print("5 " + error.toString());
+                errorMsg(error.toString());
+                emit(AcceptConnectionErrorState());
+              });
+    })
+        .catchError((error) {
+          if (kDebugMode) print("6 " + error.toString());
+          errorMsg(error.toString());
+          emit(AcceptConnectionErrorState());
+    });
+
+  }
+  //#endregion
+
 
 
 }
