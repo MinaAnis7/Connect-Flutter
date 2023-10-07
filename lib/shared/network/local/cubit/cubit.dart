@@ -66,14 +66,14 @@ class AppCubit extends Cubit<AppStates> {
         connects: conn,
       );
       CacheHelper.putString('userId', value.user!.uid)
-          .then((value) => kDebugMode ? print(value) : null)
-          .catchError((error) => kDebugMode ? print(error.toString()) : null);
-      emit(UserRegisterSuccessState());
-      getUserData();
-      getPosts();
-      getAllUsers();
-      getProfilePosts();
-      getNotifications();
+          .then((value) {
+        emit(UserRegisterSuccessState());
+        getUserData();
+      })
+          .catchError((error) {
+            errorMsg(error.toString());
+      });
+
       if (kDebugMode) print(value.user!.email);
     }).catchError((error) {
       emit(UserRegisterErrorState());
@@ -94,12 +94,8 @@ class AppCubit extends Cubit<AppStates> {
       emit(UserLoginSuccessState());
 
       CacheHelper.putString('userId', value.user!.uid)
-          .then((value) async{
-        await getUserData();
-        getPosts();
-        getProfilePosts();
-        getAllUsers();
-        getNotifications();
+          .then((value) {
+            getUserData();
       })
           .catchError((error) {
         kDebugMode ? print(error.toString()) : null;
@@ -144,7 +140,7 @@ class AppCubit extends Cubit<AppStates> {
   //#region Get User Data
   UserModel? userModel;
 
-  Future<bool> getUserData() {
+  void getUserData() {
     FirebaseFirestore.instance
         .collection('users')
         .doc(CacheHelper.getData('userId'))
@@ -152,14 +148,16 @@ class AppCubit extends Cubit<AppStates> {
         .then((value) {
       userModel = UserModel.fromJson(value.data());
       emit(GetUserDataSuccessState());
-      return Future.value(true);
+      getPosts();
+      getProfilePosts();
+      getAllUsers();
+      getConnections();
+      getNotifications();
     }).catchError((error) {
       if (kDebugMode) print(error);
       emit(GetUserDataErrorState());
-      return Future.value(false);
     });
 
-    return Future.value(false);
   }
 
   Future<void> getUserDataRefresh() async {
@@ -527,25 +525,36 @@ class AppCubit extends Cubit<AppStates> {
   //#region Get Posts
   List<PostModel> posts = [];
 
-  Future<bool> getPosts() {
+  void getPosts() {
     emit(GetPostsLoadingState());
     posts = [];
-    FirebaseFirestore.instance.collection('posts')
-        .orderBy('dateTime', descending: true)
-        .get().then((value) {
-      value.docs.forEach((element) {
-        posts.add(PostModel.fromJson(element.data()));
-        print(element);
+    List<String> connectionIds = [];
+    
+    FirebaseFirestore.instance.collection('users')
+    .doc(CacheHelper.getData('userId'))
+    .collection('connections')
+    .get()
+    .then((value) {
+      value.docs.forEach((doc) {
+        connectionIds.add(doc.id);
       });
-      emit(GetPostsSuccessState());
-      return Future.value(true);
-    }).catchError((error) {
-      errorMsg(error.toString());
-      emit(GetUserDataErrorState());
-      return Future.value(false);
+
+      FirebaseFirestore.instance.collection('posts')
+          .orderBy('dateTime', descending: true)
+          .get().then((value) {
+        value.docs.forEach((doc) {
+          if(connectionIds.contains(doc.data()['uid']))
+            posts.add(PostModel.fromJson(doc.data()));
+        });
+        emit(GetPostsSuccessState());
+      }).catchError((error) {
+        errorMsg(error.toString());
+        emit(GetUserDataErrorState());
+      });
+
     });
 
-    return Future.value(false);
+    
   }
 
   List<PostModel> profilePosts = [];
@@ -573,6 +582,19 @@ class AppCubit extends Cubit<AppStates> {
   }
 
 //#endregion
+
+  //#region Delete a Post
+
+  void deletePost(PostModel post)
+  {
+    FirebaseFirestore.instance.collection('posts')
+        .doc(post.postId)
+        .delete().then((value) {
+          getProfilePosts();
+    });
+  }
+
+  //#endregion
 
   //#region Love a Post
   void love(PostModel post) {
@@ -722,30 +744,43 @@ class AppCubit extends Cubit<AppStates> {
 
   List<UserModel> allUsers = [];
 
-  Future<bool> getAllUsers()
+  //This function get the not connected users.
+  void getAllUsers()
   {
     emit(GetAllUsersLoadingState());
 
     allUsers = [];
 
-    FirebaseFirestore.instance
-        .collection('users')
+    List<String> connectionIds = [];
+
+    FirebaseFirestore.instance.collection('users')
+        .doc(CacheHelper.getData('userId'))
+        .collection('connections')
         .get()
         .then((value) {
-          value.docs.forEach((doc) {
-            if(doc.data()['id'] != CacheHelper.getData('userId'))
-              allUsers.add(UserModel.fromJson(doc.data()));
-          });
-          emit(GetAllUsersSuccessState());
-          return Future.value(true);
-    })
-        .catchError((error){
-          errorMsg(error.toString());
-          emit(GetAllUsersErrorState());
-          return Future.value(false);
+      value.docs.forEach((doc) {
+        connectionIds.add(doc.id);
+      });
+
+      FirebaseFirestore.instance
+          .collection('users')
+          .get()
+          .then((value) {
+        value.docs.forEach((doc) {
+          if(! connectionIds.contains(doc.data()['id']) && doc.data()['id'] != CacheHelper.getData('userId'))
+            allUsers.add(UserModel.fromJson(doc.data()));
+        });
+        emit(GetAllUsersSuccessState());
+      })
+          .catchError((error){
+        errorMsg(error.toString());
+        emit(GetAllUsersErrorState());
+      });
+
     });
 
-    return Future.value(false);
+
+
   }
 
   //#endregion
@@ -865,42 +900,49 @@ class AppCubit extends Cubit<AppStates> {
     emit(GetNotificationsLoadingState());
 
     FirebaseFirestore.instance.collection('users')
-        .doc(CacheHelper.getData('userId'))
+        .doc(userModel?.id)
         .collection('notifications')
         .snapshots()
         .listen((event) {
           notifications = [];
-
           event.docs.forEach((doc) {
-            notifications.add(NotificationModel.fromJson(doc.data()));
+            doc.data()['user'].get().then((value) {
+              notifications.add(NotificationModel.fromJson(doc.data(), UserModel.fromJson(value.data())));
+              emit(GetNotificationsSuccessState());
+            });
           });
 
-          print(notifications.toString());
-
-          emit(GetNotificationsSuccessState());
     });
 
   }
 
-  void rejectConnection(NotificationModel notification)
+  void rejectConnection(NotificationModel notification, int index)
   {
+    notifications.removeAt(index);
+    emit(RejectNotificationState());
+
     FirebaseFirestore.instance.collection('users')
         .doc(userModel!.id)
         .collection('notifications')
         .doc(notification.id).delete().then((value) {
+          emit(RejectNotificationState());
           errorMsg("Connection Request Was Rejected");
     });
   }
 
-  void markAsRead(NotificationModel notification)
+  void markAsRead(NotificationModel notification, int index)
   {
+    notifications.removeAt(index);
     FirebaseFirestore.instance.collection('users')
-        .doc(userModel!.id)
+        .doc(CacheHelper.getData('userId'))
         .collection('notifications')
-        .doc(notification.id).delete();
+        .doc(notification.id).delete().then((value) {
+          emit(RejectNotificationState());
+    });
+
   }
   
-  void acceptConnection(NotificationModel notification)
+  void acceptConnection(NotificationModel notification, int index)
   {
     emit(AcceptConnectionLoadingState());
 
@@ -908,14 +950,14 @@ class AppCubit extends Cubit<AppStates> {
     FirebaseFirestore.instance.collection('users')
         .doc(userModel!.id)
         .collection('connections')
-        .doc(notification.user.id)
+        .doc(notification.user?.id)
         .set(
         {'user' : FirebaseFirestore.instance.collection('users')
-            .doc(notification.user.id)}, SetOptions(merge: true))
+            .doc(notification.user?.id)}, SetOptions(merge: true))
         .then((value) {
           // Second, add me to the user who sent the connection
           FirebaseFirestore.instance.collection('users')
-              .doc(notification.user.id)
+              .doc(notification.user?.id)
               .collection('connections')
               .doc(userModel!.id)
               .set({'user' : FirebaseFirestore.instance
@@ -928,12 +970,12 @@ class AppCubit extends Cubit<AppStates> {
                 );
                 FirebaseFirestore.instance
                     .collection('users')
-                    .doc(notification.user.id)
+                    .doc(notification.user?.id)
                     .collection('notifications')
                     .add(acceptNotification.toMap()).then((value) {
                       FirebaseFirestore.instance
                           .collection('users')
-                          .doc(notification.user.id)
+                          .doc(notification.user?.id)
                           .collection('notifications')
                           .doc(value.id)
                           .update({'id' : value.id}).then((value) {
@@ -941,7 +983,7 @@ class AppCubit extends Cubit<AppStates> {
                             // for both of us
                             FirebaseFirestore.instance
                                 .collection('users')
-                                .doc(notification.user.id)
+                                .doc(notification.user?.id)
                                 .update({'numOfConnects' : FieldValue.increment(1)})
                                 .then((value) {
                                   FirebaseFirestore.instance
@@ -951,14 +993,20 @@ class AppCubit extends Cubit<AppStates> {
                                       .then((value) {
                                         emit(AcceptConnectionSuccessState());
                                         msg("Now, You Are Friends!");
-
+                                        getConnections();
+                                        getAllUsers();
                                         // Finally, the notification
                                         // Needs to be removed
+                                        notifications.removeAt(index);
+                                        emit(AcceptConnectionSuccessState());
+
                                         FirebaseFirestore.instance
                                         .collection('users')
                                         .doc(userModel!.id)
                                         .collection('notifications')
-                                        .doc(notification.id).delete();
+                                        .doc(notification.id).delete().then((value) {
+                                          emit(AcceptConnectionSuccessState());
+                                        });
                                   })
                                       .catchError((error){
                                         if (kDebugMode) print("1 " + error.toString());
@@ -998,6 +1046,30 @@ class AppCubit extends Cubit<AppStates> {
   }
   //#endregion
 
+  //#region Get Connections
+  List<UserModel> myConnections = [];
+  void getConnections()
+  {
+    myConnections = [];
+    FirebaseFirestore.instance.collection('users')
+        .doc(CacheHelper.getData('userId'))
+        .collection('connections')
+        .get()
+        .then((value) {
+          value.docs.forEach((doc) {
+            doc.data()['user'].get().then((value) {
+              myConnections.add(UserModel.fromJson(value.data()));
+              emit(GetConnectionsSuccessState());
+            });
+          });
+    })
+        .catchError((error) {
+          errorMsg(error.toString());
+          emit(GetConnectionsErrorState());
+    });
+  }
+
+  //#endregion
 
 
 }

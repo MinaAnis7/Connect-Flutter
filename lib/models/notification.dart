@@ -6,32 +6,24 @@ class NotificationModel
 {
   String? id;
   late String type;
-  late UserModel user;
+  UserModel? user;
 
   NotificationModel({
     required this.type,
     required this.user,
 });
 
-  NotificationModel.fromJson(Map<String, dynamic> notification)
+  NotificationModel.fromJson(Map<String, dynamic> notification, UserModel user)
   {
-    UserModel user;
-    notification['user'].get().then((value) {
-      user = UserModel.fromJson(value.data());
-
-      this.id = notification['id'];
-      this.type = notification['type'];
-      this.user = user;
-    })
-    .catchError((error){
-      errorMsg(error.toString());
-    });
+    this.id = notification['id'];
+    this.type = notification['type'];
+    this.user = user;
   }
 
   Map<String, dynamic> toMap()
   {
     DocumentReference userRef = FirebaseFirestore.instance.collection('users')
-    .doc(user.id);
+    .doc(user?.id);
 
     return {
       'type' : this.type,

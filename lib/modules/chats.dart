@@ -23,7 +23,7 @@ class Chats extends StatelessWidget {
           body: GestureDetector(
             onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
             child: ConditionalBuilder(
-              condition: cubit.allUsers.length != 0,
+              condition: cubit.myConnections.length != 0,
               builder: (context) => ConditionalBuilder(
                 condition: state is! GetAllUsersLoadingState,
                 builder: (context) => SingleChildScrollView(
@@ -79,9 +79,9 @@ class Chats extends StatelessWidget {
                           ),
                           child: ListView.separated(
                             physics: NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) => chatItemBuilder(cubit.allUsers[index], context),
+                            itemBuilder: (context, index) => chatItemBuilder(cubit.myConnections[index], context),
                             separatorBuilder:(context, index) => separator,
-                            itemCount: cubit.allUsers.length,
+                            itemCount: cubit.myConnections.length,
                             shrinkWrap: true,
                           ),
                         ),

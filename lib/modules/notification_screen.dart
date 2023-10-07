@@ -13,86 +13,86 @@ class NotificationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AppCubit, AppStates>
-      (
-        listener: (context, state) {},
-        builder: (context, state) {
-          AppCubit cubit = AppCubit.get(context);
+    return BlocConsumer<AppCubit, AppStates>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        AppCubit cubit = AppCubit.get(context);
 
-          return Scaffold(
-            appBar: AppBar(
-              leading: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(Icons.chevron_left, size: 26.sp,),
-              ),
-              title: Text(
-                "Notifications",
-                style: TextStyle(
+        return Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.chevron_left, size: 26.sp,),
+            ),
+            title: Text(
+              "Notifications",
+              style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.black
-                ),
               ),
-              centerTitle: true,
             ),
-            backgroundColor: superBabyBlue,
-            body: SafeArea(
+            centerTitle: true,
+          ),
+          backgroundColor: superBabyBlue,
+          body: SafeArea(
               child: ConditionalBuilder(
-                  condition: cubit.notifications.isNotEmpty,
-                  builder: (context) {
-                    return ConditionalBuilder(
-                        condition: state is GetNotificationsLoadingState,
-                        builder: (context) {
-                          return Center(
-                            child: CircularProgressIndicator(
-                              color: blue,
-                              strokeWidth: 3.sp,
-                            ),
-                          );
-                        },
-                        fallback: (context) {
-                          return Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(13.5.sp),
-                              ),
-                              child: ListView.separated(
-                                itemBuilder: (context, index) {
-                                    return notificationItemBuilder(cubit.notifications[index], cubit);
-                                  },
-                                separatorBuilder: (context, index) {
-                                    return separator;
-                                  },
-                                itemCount: cubit.notifications.length,
-                                shrinkWrap: true,
-                                physics: BouncingScrollPhysics(),
-                              ),
-                            ),
-                          );
-                        },
-                    );
-                  },
-                  fallback: (context) {
-                    return Center(child: Text(
-                      "You don't have any notifications",
-                    ),);
-                  },
+                condition: cubit.notifications.isNotEmpty,
+                builder: (context) {
+                  return ConditionalBuilder(
+                    condition: state is GetNotificationsLoadingState,
+                    builder: (context) {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: blue,
+                          strokeWidth: 3.sp,
+                        ),
+                      );
+                    },
+                    fallback: (context) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(13.5.sp),
+                          ),
+                          child: ListView.separated(
+                            itemBuilder: (context, index) {
+                              return notificationItemBuilder(cubit.notifications[index], cubit, index);
+                            },
+                            separatorBuilder: (context, index) {
+                              return separator;
+                            },
+                            itemCount: cubit.notifications.length,
+                            shrinkWrap: true,
+                            physics: BouncingScrollPhysics(),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+                fallback: (context) {
+                  return Center(child: Text(
+                    "You don't have any notifications",
+                  ),);
+                },
               )
-            ),
-          );
-        },
+          ),
+        );
+      },
     );
   }
 
-  Widget notificationItemBuilder(NotificationModel notification, AppCubit cubit)
+  Widget? notificationItemBuilder(NotificationModel notification, AppCubit cubit, int index)
   {
-    UserModel user = notification.user;
+    UserModel? user = notification.user;
 
-    return Material(
+    if(user != null)
+      return Material(
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(13.5.sp),
       clipBehavior: Clip.hardEdge,
@@ -160,7 +160,7 @@ class NotificationScreen extends StatelessWidget {
                             children: [
                               MaterialButton(
                                 onPressed: () {
-                                  cubit.acceptConnection(notification);
+                                  cubit.acceptConnection(notification, index);
                                 },
                                 child: Text(
                                   "Connect",
@@ -184,7 +184,7 @@ class NotificationScreen extends StatelessWidget {
 
                               MaterialButton(
                                 onPressed: () {
-                                  cubit.rejectConnection(notification);
+                                  cubit.rejectConnection(notification, index);
                                 },
                                 child: Text(
                                   "Reject",
@@ -269,7 +269,7 @@ class NotificationScreen extends StatelessWidget {
                             children: [
                               TextButton(
                                 onPressed: () {
-                                  cubit.markAsRead(notification);
+                                  cubit.markAsRead(notification, index);
                                 },
                                 child: Text(
                                   "Mark as Read",
@@ -295,5 +295,6 @@ class NotificationScreen extends StatelessWidget {
         ),
       ),
     );
+    return Center(child: CircularProgressIndicator(color: blue, strokeWidth: 3.sp,),);
   }
 }

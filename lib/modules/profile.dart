@@ -1,4 +1,5 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,422 +21,446 @@ class Profile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return BlocConsumer<AppCubit, AppStates>(
       listener: (context, state) {},
       builder: (context, state) {
-        double height = MediaQuery.of(context).size.height;
+        double height = MediaQuery
+            .of(context)
+            .size
+            .height;
         AppCubit cubit = AppCubit.get(context);
 
 
         return ConditionalBuilder(
           condition: cubit.userModel != null,
-          fallback: (context) => Center(child: CircularProgressIndicator(color: blue,),),
-          builder:(context) =>  RefreshIndicator(
-            onRefresh: () async{
-              cubit.getProfilePosts();
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 10.w,
-              ),
-              child: RefreshIndicator(
-                color: blue,
+          fallback: (context) =>
+              Center(child: CircularProgressIndicator(color: blue,),),
+          builder: (context) =>
+              RefreshIndicator(
                 onRefresh: () async {
-                  await cubit.getUserDataRefresh();
+                  cubit.getProfilePosts();
                 },
-                child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  child: Column(
-                    children: [
-                      // Cover & profile picture
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.sp),
-                          color: Colors.white,
-                        ),
-                        child: Column(
-                          children: [
-                            Container(
-                              height: height / 3.5,
-                              child: Stack(
-                                alignment: Alignment.bottomCenter,
-                                children: [
-                                  Align(
-                                    alignment: Alignment.topCenter,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10.sp),
-                                      child: Image(
-                                        image: NetworkImage(
-                                            cubit.userModel!.cover),
-                                        height:
-                                            MediaQuery.of(context).size.height / 4.5,
-                                        width: double.infinity,
-                                        fit: BoxFit.cover,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                  ),
+                  child: RefreshIndicator(
+                    color: blue,
+                    onRefresh: () async {
+                      await cubit.getUserDataRefresh();
+                    },
+                    child: SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Column(
+                        children: [
+                          // Cover & profile picture
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.sp),
+                              color: Colors.white,
+                            ),
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: height / 3.5,
+                                  child: Stack(
+                                    alignment: Alignment.bottomCenter,
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.topCenter,
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                              10.sp),
+                                          child: Image(
+                                            image: NetworkImage(
+                                                cubit.userModel!.cover),
+                                            height:
+                                            MediaQuery
+                                                .of(context)
+                                                .size
+                                                .height / 4.5,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
 
-                                  //Profile Image
-                                  Stack(alignment: Alignment.center, children: [
-                                    CircleAvatar(
-                                      radius: 52.sp,
-                                      backgroundColor: superBabyBlue,
-                                    ),
-                                    CircleAvatar(
-                                      radius: 50.sp,
-                                      backgroundColor: superBabyBlue,
-                                      backgroundImage: NetworkImage(
-                                            cubit.userModel!.image),
-                                    ),
-                                  ]),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10.h,
-                            ),
-                            // Name
-                            Text(
-                              cubit.userModel!.name,
-                              style: TextStyle(
-                                fontSize: 17.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            // Bio
-                            Text(
-                              cubit.userModel!.bio,
-                              style: TextStyle(
-                                color: Colors.black54,
-                                fontSize: 12.9.sp,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5.sp,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10.w),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          '${cubit.userModel!.numOfConnects}',
-                                          style: TextStyle(
-                                            fontSize: 20.sp,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Connections',
-                                          style: TextStyle(
-                                            fontSize: 12.5.sp,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: defaultButton(
-                                      onPressed: () {
-                                        navigateTo(context: context, widget: EditProfile(
-                                          name: cubit.userModel!.name,
-                                          phone: cubit.userModel!.phone,
-                                          bio: cubit.userModel!.bio,
-                                        ));
-                                      },
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            'Edit Profile',
-                                            style: TextStyle(
-                                              fontSize: 14.sp,
-                                              color: Colors.blue,
-                                              fontWeight: FontWeight.bold,
+                                      //Profile Image
+                                      Stack(alignment: Alignment.center,
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 52.sp,
+                                              backgroundColor: superBabyBlue,
                                             ),
-                                          ),
-                                          SizedBox(width: 5.w,),
-                                        ],
-                                      ),
-                                      color: superBabyBlue,
-                                    ),
+                                            CircleAvatar(
+                                              radius: 50.sp,
+                                              backgroundColor: superBabyBlue,
+                                              backgroundImage: NetworkImage(
+                                                  cubit.userModel!.image),
+                                            ),
+                                          ]),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 10.h,),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(height: 10.h,),
-                      // Create Post
-                      Container(
-                        width: double.infinity,
-                        child: Card(
-                          clipBehavior: Clip.hardEdge,
-                          elevation: 3.0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.sp),
-                          ),
-                          color: Colors.white,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Image and text
-                              InkWell(
-                                onTap: () {
-                                  navigateTo(
-                                      context: context, widget: CreatePost());
-                                },
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.all(10.0.sp),
-                                      child: ClipRRect(
-                                        clipBehavior: Clip.hardEdge,
-                                        borderRadius:
-                                        BorderRadius.circular(30.sp),
-                                        child: CircleAvatar(
-                                          radius: 30.sp,
-                                          backgroundColor: superBabyBlue,
-                                          backgroundImage: NetworkImage(
-                                            cubit.userModel!.image,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10.w,
-                                    ),
-                                    Text(
-                                      'Share your thoughts...',
-                                      style: TextStyle(
-                                        fontSize: 12.9.sp,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ],
                                 ),
-                              ),
-
-                              // Separator
-                              separator,
-
-                              //Buttons
-                              Row(
-                                children: [
-                                  // Image
-                                  Expanded(
-                                    child: Container(
-                                      padding: EdgeInsets.all(8.sp),
-                                      child: InkWell(
-                                        onTap: () {
-                                          cubit.addPostImage();
-                                          navigateTo(
-                                              context: context,
-                                              widget: CreatePost());
-                                        },
-                                        borderRadius:
-                                        BorderRadius.circular(5.sp),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                SizedBox(
+                                  height: 10.h,
+                                ),
+                                // Name
+                                Text(
+                                  cubit.userModel!.name,
+                                  style: TextStyle(
+                                    fontSize: 17.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                // Bio
+                                Text(
+                                  cubit.userModel!.bio,
+                                  style: TextStyle(
+                                    color: Colors.black54,
+                                    fontSize: 12.9.sp,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 5.sp,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10.w),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
                                           children: [
-                                            Icon(
-                                              MyIcons.camera,
-                                              color: Colors.red[300],
-                                              size: 22.0.sp,
-                                            ),
-                                            SizedBox(
-                                              width: 5.w,
+                                            Text(
+                                              '${cubit.userModel!
+                                                  .numOfConnects}',
+                                              style: TextStyle(
+                                                fontSize: 20.sp,
+                                              ),
                                             ),
                                             Text(
-                                              'Image',
+                                              'Connections',
                                               style: TextStyle(
-                                                  fontSize: 12.sp,
-                                                  color: Colors.grey),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  // Tags
-                                  Expanded(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(8.0.sp),
-                                      child: InkWell(
-                                        borderRadius:
-                                        BorderRadius.circular(5.sp),
-                                        onTap: () {
-                                          navigateTo(
-                                              context: context,
-                                              widget: CreatePost());
-                                          showModalBottomSheet(
-                                            context: context,
-                                            builder: (context) {
-                                              return Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 10.w),
-                                                child: Column(
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Expanded(
-                                                          child: TextFormField(
-                                                            controller:
-                                                            tagsController,
-                                                            decoration:
-                                                            InputDecoration(
-                                                              hintText:
-                                                              'Add a Tag',
-                                                              border:
-                                                              InputBorder
-                                                                  .none,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            cubit.addTag(
-                                                                tagsController
-                                                                    .text);
-                                                            tagsController
-                                                                .text = '';
-                                                          },
-                                                          style: TextButton
-                                                              .styleFrom(
-                                                              backgroundColor:
-                                                              blue,
-                                                              shape:
-                                                              RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                BorderRadius.circular(
-                                                                    10.sp),
-                                                              )),
-                                                          child: FaIcon(
-                                                            FontAwesomeIcons
-                                                                .plus,
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    )
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              MyIcons.tag,
-                                              color: blue,
-                                              size: 22.0.sp,
-                                            ),
-                                            SizedBox(
-                                              width: 5.w,
-                                            ),
-                                            Text(
-                                              'Tags',
-                                              style: TextStyle(
-                                                  fontSize: 12.sp,
-                                                  color: Colors.grey),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(8.0.sp),
-                                      child: InkWell(
-                                        borderRadius:
-                                        BorderRadius.circular(5.sp),
-                                        onTap: () {},
-                                        child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              MyIcons.doc,
-                                              color: Colors.green,
-                                              size: 22.0.sp,
-                                            ),
-                                            SizedBox(
-                                              width: 5.w,
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                'Document',
-                                                style: TextStyle(
-                                                    fontSize: 12.sp,
-                                                    color: Colors.grey),
-                                                overflow: TextOverflow.ellipsis,
+                                                fontSize: 12.5.sp,
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
+                                      Expanded(
+                                        child: defaultButton(
+                                          onPressed: () {
+                                            navigateTo(context: context,
+                                                widget: EditProfile(
+                                                  name: cubit.userModel!.name,
+                                                  phone: cubit.userModel!.phone,
+                                                  bio: cubit.userModel!.bio,
+                                                ));
+                                          },
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment
+                                                .center,
+                                            children: [
+                                              Text(
+                                                'Edit Profile',
+                                                style: TextStyle(
+                                                  fontSize: 14.sp,
+                                                  color: Colors.blue,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              SizedBox(width: 5.w,),
+                                            ],
+                                          ),
+                                          color: superBabyBlue,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 10.h,),
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(height: 10.h,),
+                          // Create Post
+                          Container(
+                            width: double.infinity,
+                            child: Card(
+                              clipBehavior: Clip.hardEdge,
+                              elevation: 3.0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.sp),
+                              ),
+                              color: Colors.white,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Image and text
+                                  InkWell(
+                                    onTap: () {
+                                      navigateTo(
+                                          context: context,
+                                          widget: CreatePost());
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.all(10.0.sp),
+                                          child: ClipRRect(
+                                            clipBehavior: Clip.hardEdge,
+                                            borderRadius:
+                                            BorderRadius.circular(30.sp),
+                                            child: CircleAvatar(
+                                              radius: 30.sp,
+                                              backgroundColor: superBabyBlue,
+                                              backgroundImage: NetworkImage(
+                                                cubit.userModel!.image,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 10.w,
+                                        ),
+                                        Text(
+                                          'Share your thoughts...',
+                                          style: TextStyle(
+                                            fontSize: 12.9.sp,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
                                     ),
+                                  ),
+
+                                  // Separator
+                                  separator,
+
+                                  //Buttons
+                                  Row(
+                                    children: [
+                                      // Image
+                                      Expanded(
+                                        child: Container(
+                                          padding: EdgeInsets.all(8.sp),
+                                          child: InkWell(
+                                            onTap: () {
+                                              cubit.addPostImage();
+                                              navigateTo(
+                                                  context: context,
+                                                  widget: CreatePost());
+                                            },
+                                            borderRadius:
+                                            BorderRadius.circular(5.sp),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  MyIcons.camera,
+                                                  color: Colors.red[300],
+                                                  size: 22.0.sp,
+                                                ),
+                                                SizedBox(
+                                                  width: 5.w,
+                                                ),
+                                                Text(
+                                                  'Image',
+                                                  style: TextStyle(
+                                                      fontSize: 12.sp,
+                                                      color: Colors.grey),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      // Tags
+                                      Expanded(
+                                        child: Padding(
+                                          padding: EdgeInsets.all(8.0.sp),
+                                          child: InkWell(
+                                            borderRadius:
+                                            BorderRadius.circular(5.sp),
+                                            onTap: () {
+                                              navigateTo(
+                                                  context: context,
+                                                  widget: CreatePost());
+                                              showModalBottomSheet(
+                                                context: context,
+                                                builder: (context) {
+                                                  return Padding(
+                                                    padding: EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 10.w),
+                                                    child: Column(
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            Expanded(
+                                                              child: TextFormField(
+                                                                controller:
+                                                                tagsController,
+                                                                decoration:
+                                                                InputDecoration(
+                                                                  hintText:
+                                                                  'Add a Tag',
+                                                                  border:
+                                                                  InputBorder
+                                                                      .none,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                cubit.addTag(
+                                                                    tagsController
+                                                                        .text);
+                                                                tagsController
+                                                                    .text = '';
+                                                              },
+                                                              style: TextButton
+                                                                  .styleFrom(
+                                                                  backgroundColor:
+                                                                  blue,
+                                                                  shape:
+                                                                  RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                        10.sp),
+                                                                  )),
+                                                              child: FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .plus,
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        )
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  MyIcons.tag,
+                                                  color: blue,
+                                                  size: 22.0.sp,
+                                                ),
+                                                SizedBox(
+                                                  width: 5.w,
+                                                ),
+                                                Text(
+                                                  'Tags',
+                                                  style: TextStyle(
+                                                      fontSize: 12.sp,
+                                                      color: Colors.grey),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Padding(
+                                          padding: EdgeInsets.all(8.0.sp),
+                                          child: InkWell(
+                                            borderRadius:
+                                            BorderRadius.circular(5.sp),
+                                            onTap: () {},
+                                            child: Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  MyIcons.doc,
+                                                  color: Colors.green,
+                                                  size: 22.0.sp,
+                                                ),
+                                                SizedBox(
+                                                  width: 5.w,
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    'Document',
+                                                    style: TextStyle(
+                                                        fontSize: 12.sp,
+                                                        color: Colors.grey),
+                                                    overflow: TextOverflow
+                                                        .ellipsis,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 3.h,
                                   ),
                                 ],
                               ),
-                              SizedBox(
-                                height: 3.h,
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
 
-                      SizedBox(
-                        height: 10.h,
-                      ),
-
-                      // Posts
-                      ConditionalBuilder(
-                        condition: cubit.profilePosts.isNotEmpty,
-                        builder:(context) => ListView.separated(
-                          itemBuilder: (context, index) => postBuilder(context, cubit.profilePosts[index], index, cubit, state),
-                          separatorBuilder: (context, index) => SizedBox(
+                          SizedBox(
                             height: 10.h,
                           ),
-                          itemCount: cubit.profilePosts.length,
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                        ),
-                        fallback: (context) => Column(
-                          children: [
-                            SizedBox(height: 10.h,),
-                            CircularProgressIndicator(color: blue,),
-                          ],
-                        ),
-                      ),
 
-                      SizedBox(
-                        height: 10.h,
+                          // Posts
+                          ConditionalBuilder(
+                            condition: cubit.profilePosts.isNotEmpty,
+                            builder: (context) =>
+                                ListView.separated(
+                                  itemBuilder: (context, index) =>
+                                      postBuilder(
+                                          context, cubit.profilePosts[index],
+                                          index, cubit, state),
+                                  separatorBuilder: (context, index) =>
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
+                                  itemCount: cubit.profilePosts.length,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                ),
+                            fallback: (context) =>
+                                Column(
+                                  children: [
+                                    SizedBox(height: 10.h,),
+                                    CircularProgressIndicator(color: blue,),
+                                  ],
+                                ),
+                          ),
+
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
         );
       },
     );
   }
 
-  Widget postBuilder(
-      BuildContext context, PostModel post, int index, AppCubit cubit, state) {
+  Widget postBuilder(BuildContext context_main, PostModel post, int index,
+      AppCubit cubit, state) {
     return Container(
       width: double.infinity,
       child: Card(
@@ -493,9 +518,23 @@ class Profile extends StatelessWidget {
                 ),
 
                 // Post options
-                IconButton(
-                  onPressed: () {},
-                  icon: FaIcon(FontAwesomeIcons.ellipsis, size: 20.sp,),
+                PopupMenuButton(
+                  itemBuilder: (context) {
+                    return [
+                      PopupMenuItem(
+                          child: Row(
+                            children: [
+                              Icon(MyIcons.trash, color: Colors.red, size: 20.sp,),
+                              SizedBox(width: 7.w,),
+                              Text("Delete", style: TextStyle(fontSize: 14.sp),),
+                            ],
+                          ),
+                        onTap: () {
+                            cubit.deletePost(post);
+                        },
+                      ),
+                    ];
+                  },
                 ),
 
                 SizedBox(
@@ -534,16 +573,17 @@ class Profile extends StatelessWidget {
                   child: Wrap(
                     children: List.generate(
                       post.tags.length,
-                          (index) => InkWell(
-                        child: Text(
-                          '#' + post.tags[index],
-                          style: TextStyle(
-                            fontSize: 12.5.sp,
-                            color: blue,
+                          (index) =>
+                          InkWell(
+                            child: Text(
+                              '#' + post.tags[index],
+                              style: TextStyle(
+                                fontSize: 12.5.sp,
+                                color: blue,
+                              ),
+                            ),
+                            onTap: () {},
                           ),
-                        ),
-                        onTap: () {},
-                      ),
                     ),
                     spacing: 5.w,
                   )),
@@ -556,7 +596,10 @@ class Profile extends StatelessWidget {
             if (post.postImage != null)
               Container(
                 constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height / 2,
+                  maxHeight: MediaQuery
+                      .of(context_main)
+                      .size
+                      .height / 2,
                 ),
                 child: Image.network(
                   post.postImage!,
@@ -612,8 +655,8 @@ class Profile extends StatelessWidget {
                       Text(
                         '${post.numOfComments}',
                         style: TextStyle(
-                          color: blue,
-                          fontSize: 13.sp
+                            color: blue,
+                            fontSize: 13.sp
                         ),
                       ),
                     ],
@@ -667,9 +710,9 @@ class Profile extends StatelessWidget {
                                     Text(
                                       'Loved',
                                       style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.red,
-                                        fontSize: 13.sp
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.red,
+                                          fontSize: 13.sp
                                       ),
                                     ),
                                   ],
@@ -687,7 +730,8 @@ class Profile extends StatelessWidget {
                                     SizedBox(
                                       width: 5.w,
                                     ),
-                                    Text('Love', style: TextStyle(fontSize: 13.sp),),
+                                    Text('Love',
+                                      style: TextStyle(fontSize: 13.sp),),
                                   ],
                                 ),
                               );
@@ -713,7 +757,9 @@ class Profile extends StatelessWidget {
                     child: InkWell(
                       onTap: () {
                         cubit.getComments(post);
-                        Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: CommentsSheet(post)));
+                        Navigator.push(
+                            context_main, PageTransition(type: PageTransitionType
+                            .bottomToTop, child: CommentsSheet(post)));
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,

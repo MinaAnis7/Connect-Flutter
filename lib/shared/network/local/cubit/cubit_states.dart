@@ -93,3 +93,9 @@ class GetNotificationsSuccessState extends AppStates {}
 class AcceptConnectionSuccessState extends AppStates {}
 class AcceptConnectionLoadingState extends AppStates {}
 class AcceptConnectionErrorState extends AppStates {}
+
+class GetConnectionsLoadingState extends AppStates {}
+class GetConnectionsSuccessState extends AppStates {}
+class GetConnectionsErrorState extends AppStates {}
+
+class RejectNotificationState extends AppStates {}
