@@ -27,7 +27,7 @@ class MyConnections extends StatelessWidget {
                   children: [
                     Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: cubit.isDark ? DarkSurface : Colors.white,
                         borderRadius: BorderRadius.circular(13.sp),
                       ),
                       child: SingleChildScrollView(
@@ -42,6 +42,7 @@ class MyConnections extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 18.sp,
                                   fontWeight: FontWeight.bold,
+                                  color: cubit.isDark ? Colors.white : Colors.black,
                                 ),
                               ),
                             ),
@@ -49,8 +50,8 @@ class MyConnections extends StatelessWidget {
                             ListView.separated(
                               physics: NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) =>
-                                  connectionItemBuilder(cubit.myConnections[index], context),
-                              separatorBuilder: (context, index) => separator,
+                                  connectionItemBuilder(cubit.myConnections[index], context, cubit),
+                              separatorBuilder: (context, index) => separator(context),
                               itemCount: cubit.myConnections.length,
                               shrinkWrap: true,
                             ),
@@ -76,7 +77,7 @@ class MyConnections extends StatelessWidget {
     );
   }
 
-  Widget connectionItemBuilder(UserModel user, BuildContext context) {
+  Widget connectionItemBuilder(UserModel user, BuildContext context, AppCubit cubit) {
     return Material(
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(13.5.sp),
@@ -87,7 +88,7 @@ class MyConnections extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CircleAvatar(
-              backgroundColor: superBabyBlue,
+              backgroundColor: cubit.isDark ? DarkBackground : superBabyBlue,
               radius: 30.sp,
               backgroundImage: NetworkImage(user.image),
             ),
@@ -104,7 +105,7 @@ class MyConnections extends StatelessWidget {
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15.sp,
-                        color: Colors.black,
+                        color: cubit.isDark ? Colors.white : Colors.black,
                         overflow: TextOverflow.ellipsis),
                     maxLines: 1,
                   ),

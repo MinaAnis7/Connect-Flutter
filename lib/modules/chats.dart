@@ -40,7 +40,7 @@ class Chats extends StatelessWidget {
                             borderRadius: BorderRadius.circular(30.sp),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.grey.shade400,
+                                color: cubit.isDark ? Colors.transparent : Colors.grey.shade400,
                                 blurRadius: 7,
                                 offset: Offset(0, 0),
                               ),
@@ -60,9 +60,12 @@ class Chats extends StatelessWidget {
                                 borderSide: BorderSide.none,
                               ),
                               hintText: 'Search',
+                              hintStyle: TextStyle(
+                                color: cubit.isDark ? Colors.white : Colors.black,
+                              ),
                               filled: true,
-                              fillColor: Colors.white,
-                              prefixIcon: Icon(CupertinoIcons.search, size: 20.sp,),
+                              fillColor: cubit.isDark ? DarkSurface : Colors.white,
+                              prefixIcon: Icon(CupertinoIcons.search, size: 20.sp, color: cubit.isDark ? Colors.white : Colors.black,),
                             ),
                           ),
                         ),
@@ -74,13 +77,13 @@ class Chats extends StatelessWidget {
                         padding: EdgeInsets.symmetric(horizontal: 15.w),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: cubit.isDark ? DarkSurface : Colors.white,
                             borderRadius: BorderRadius.circular(13.sp),
                           ),
                           child: ListView.separated(
                             physics: NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) => chatItemBuilder(cubit.myConnections[index], context),
-                            separatorBuilder:(context, index) => separator,
+                            itemBuilder: (context, index) => chatItemBuilder(cubit.myConnections[index], context, cubit),
+                            separatorBuilder:(context, index) => separator(context),
                             itemCount: cubit.myConnections.length,
                             shrinkWrap: true,
                           ),
@@ -109,7 +112,7 @@ class Chats extends StatelessWidget {
     );
   }
 
-  Widget chatItemBuilder(UserModel user, BuildContext context) {
+  Widget chatItemBuilder(UserModel user, BuildContext context, AppCubit cubit) {
     return Material(
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(13.5.sp),
@@ -120,15 +123,15 @@ class Chats extends StatelessWidget {
               PageTransition(type: PageTransitionType.rightToLeft,
                   child: ChatRoom(user)));
         },
-        splashColor: Colors.grey.shade50,
-        highlightColor: Colors.grey.shade50,
+        splashColor: cubit.isDark ? Colors.grey.shade800 : Colors.grey.shade50,
+        highlightColor: cubit.isDark ? Colors.grey.shade800 : Colors.grey.shade50,
         child: Container(
           padding: EdgeInsets.all(12.5.sp),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CircleAvatar(
-                backgroundColor: superBabyBlue,
+                backgroundColor: cubit.isDark ? DarkBackground : superBabyBlue,
                 radius: 30.sp,
                 backgroundImage: NetworkImage(user.image),
               ),
@@ -145,7 +148,7 @@ class Chats extends StatelessWidget {
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 15.sp,
-                          color: Colors.black,
+                          color: cubit.isDark ? Colors.white : Colors.black,
                           overflow: TextOverflow.ellipsis),
                       maxLines: 1,
                     ),

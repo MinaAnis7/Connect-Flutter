@@ -1071,5 +1071,17 @@ class AppCubit extends Cubit<AppStates> {
 
   //#endregion
 
+  //#region Dark Mode
+
+  bool isDark = CacheHelper.getData('isDark') ?? false;
+
+  void changeThemeMode(bool modeState) {
+    isDark = modeState;
+    CacheHelper.putBool('isDark', modeState);
+    emit(ChangeThemeMode());
+  }
+
+  //#endregion
+
 
 }

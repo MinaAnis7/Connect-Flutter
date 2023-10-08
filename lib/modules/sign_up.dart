@@ -30,7 +30,6 @@ class SignUpScreen extends StatelessWidget {
         AppCubit cubit = AppCubit.get(context);
 
         return Scaffold(
-          backgroundColor: Colors.white,
           appBar: AppBar(
             title: logo,
             titleSpacing: 0.0,
@@ -40,7 +39,6 @@ class SignUpScreen extends StatelessWidget {
               },
               icon: Icon(
                 Icons.arrow_back_ios,
-                color: black,
               ),
             ),
             actions: [
@@ -55,6 +53,7 @@ class SignUpScreen extends StatelessWidget {
               )
             ],
           ),
+          backgroundColor: cubit.isDark ? DarkBackground : Colors.white,
           body: GestureDetector(
             onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
             child: Container(
@@ -75,7 +74,7 @@ class SignUpScreen extends StatelessWidget {
                             Text(
                               'Sign Up',
                               style: TextStyle(
-                                color: black,
+                                color: cubit.isDark ? Colors.white : black,
                                 fontSize: 30.0.sp,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -95,9 +94,14 @@ class SignUpScreen extends StatelessWidget {
                             ),
                             defaultTFF(
                                 hintText: 'Your Name',
+                                inputColor: cubit.isDark ? Colors.white : Colors.black,
+                                borderColor: cubit.isDark ? ko7ly : babyBlue,
+                                hintColor: cubit.isDark ? Colors.grey : Colors.grey.shade700,
                                 maxLines: 1,
+                                color: cubit.isDark ? DarkSurface : superBabyBlue,
                                 keyboardType: TextInputType.text,
-                                prefixIcon: Icon(Icons.person),
+                                prefixIcon: Icon(Icons.person,
+                                color: cubit.isDark ? Colors.grey : Colors.grey.shade700,),
                                 controller: nameController,
                                 validator: (value) {
                                   if (value != null && value == '')
@@ -109,8 +113,13 @@ class SignUpScreen extends StatelessWidget {
                             defaultTFF(
                                 hintText: 'Choose Email',
                                 maxLines: 1,
+                                inputColor: cubit.isDark ? Colors.white : Colors.black,
+                                borderColor: cubit.isDark ? ko7ly : babyBlue,
+                                hintColor: cubit.isDark ? Colors.grey : Colors.grey.shade700,
+                                color: cubit.isDark ? DarkSurface : superBabyBlue,
                                 keyboardType: TextInputType.emailAddress,
-                                prefixIcon: Icon(Icons.alternate_email),
+                                prefixIcon: Icon(Icons.alternate_email,
+                                color: cubit.isDark ? Colors.grey : Colors.grey.shade700,),
                                 controller: emailController,
                                 validator: (value) {
                                   if (value != null && value == '')
@@ -122,13 +131,19 @@ class SignUpScreen extends StatelessWidget {
                             defaultTFF(
                                 hintText: 'Choose Password',
                                 maxLines: 1,
+                                inputColor: cubit.isDark ? Colors.white : Colors.black,
+                                borderColor: cubit.isDark ? ko7ly : babyBlue,
+                                hintColor: cubit.isDark ? Colors.grey : Colors.grey.shade700,
+                                color: cubit.isDark ? DarkSurface : superBabyBlue,
                                 suffixIcon: cubit.obscureIcon,
+                                suffixColor: cubit.isDark ? Colors.grey : Colors.grey.shade700,
                                 isObscure: cubit.isObscure,
                                 suffixOnPressed: () {
                                   cubit.changeVisibility();
                                 },
                                 keyboardType: TextInputType.text,
-                                prefixIcon: Icon(Icons.alternate_email),
+                                prefixIcon: Icon(Icons.alternate_email,
+                                color: cubit.isDark ? Colors.grey : Colors.grey.shade700,),
                                 controller: passwordController,
                                 validator: (value) {
                                   if (value != null && value == '')
@@ -140,8 +155,13 @@ class SignUpScreen extends StatelessWidget {
                             defaultTFF(
                                 hintText: 'Phone',
                                 maxLines: 1,
+                                inputColor: cubit.isDark ? Colors.white : Colors.black,
+                                borderColor: cubit.isDark ? ko7ly : babyBlue,
+                                hintColor: cubit.isDark ? Colors.grey : Colors.grey.shade700,
+                                color: cubit.isDark ? DarkSurface : superBabyBlue,
                                 keyboardType: TextInputType.phone,
-                                prefixIcon: Icon(Icons.phone),
+                                prefixIcon: Icon(Icons.phone,
+                                  color: cubit.isDark ? Colors.grey : Colors.grey.shade700,),
                                 controller: phoneController,
                                 validator: (value) {
                                   if (value != null && value == '')
@@ -228,14 +248,14 @@ class SignUpScreen extends StatelessWidget {
                                   Text(
                                     'Sign up With Google',
                                     style: TextStyle(
-                                      color: black,
+                                      color: cubit.isDark ? Colors.white : black,
                                       fontSize: 15.0.sp,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ],
                               ),
-                              color: superBabyBlue,
+                              color: cubit.isDark ? DarkSurface : superBabyBlue,
                             ),
                           ],
                         ),

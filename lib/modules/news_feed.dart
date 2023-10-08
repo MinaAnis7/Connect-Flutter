@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:readmore/readmore.dart';
 import 'package:social_app/models/post_model.dart';
@@ -52,68 +53,70 @@ class NewsFeed extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (!FirebaseAuth.instance.currentUser!.emailVerified)
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10.sp),
-                            child: Container(
-                              width: double.infinity,
-                              color: babyBlue,
-                              padding: EdgeInsets.all(10.0),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.info_outline),
-                                  SizedBox(
-                                    width: 10.0.w,
-                                  ),
-                                  Expanded(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            'Please, verify your email address',
-                                            style: TextStyle(
-                                              fontSize: 12.99.sp,
-                                            ),
+                          Container(
+                            width: double.infinity,
+                            margin: EdgeInsets.only(top: 10.h),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15.sp),
+                              color: cubit.isDark ? DarkBlue : babyBlue,
+                            ),
+                            padding: EdgeInsets.all(10.0),
+                            child: Row(
+                              children: [
+                                Icon(Icons.info_outline, color: cubit.isDark ? Colors.white : Colors.black,),
+                                SizedBox(
+                                  width: 10.0.w,
+                                ),
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          'Please, verify your email address',
+                                          style: TextStyle(
+                                            fontSize: 12.99.sp,
+                                            color: cubit.isDark ? Colors.white : Colors.black,
                                           ),
                                         ),
-                                        SizedBox(
-                                          width: 10.w,
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            FirebaseAuth.instance.currentUser!
-                                                .sendEmailVerification()
-                                                .then((value) {
-                                              Fluttertoast.showToast(
-                                                msg:
-                                                    'Verification mail was sent',
-                                                toastLength: Toast.LENGTH_LONG,
-                                                timeInSecForIosWeb: 1,
-                                                gravity: ToastGravity.BOTTOM,
-                                                backgroundColor: Colors.green,
-                                                textColor: Colors.white,
-                                                fontSize: 15.0.sp,
-                                              );
-                                            }).catchError((error) {
-                                              if (kDebugMode)
-                                                print(error.toString());
-                                            });
-                                          },
-                                          child: Text(
-                                            'Send',
-                                            style: TextStyle(
-                                              color: blue,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14.0.sp,
-                                            ),
+                                      ),
+                                      SizedBox(
+                                        width: 10.w,
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          FirebaseAuth.instance.currentUser!
+                                              .sendEmailVerification()
+                                              .then((value) {
+                                            Fluttertoast.showToast(
+                                              msg:
+                                                  'Verification mail was sent',
+                                              toastLength: Toast.LENGTH_LONG,
+                                              timeInSecForIosWeb: 1,
+                                              gravity: ToastGravity.BOTTOM,
+                                              backgroundColor: Colors.green,
+                                              textColor: Colors.white,
+                                              fontSize: 15.0.sp,
+                                            );
+                                          }).catchError((error) {
+                                            if (kDebugMode)
+                                              print(error.toString());
+                                          });
+                                        },
+                                        child: Text(
+                                          'Send',
+                                          style: TextStyle(
+                                            color: blue,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14.0.sp,
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         SizedBox(
@@ -128,7 +131,7 @@ class NewsFeed extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.sp),
                             ),
-                            color: Colors.white,
+                            color: cubit.isDark ? DarkSurface : Colors.white,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -170,7 +173,7 @@ class NewsFeed extends StatelessWidget {
                                 ),
 
                                 // Separator
-                                separator,
+                                separator(context),
 
                                 //Buttons
                                 Row(
@@ -399,13 +402,14 @@ class NewsFeed extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.sp),
         ),
-        color: Colors.white,
+        color: cubit.isDark ? DarkSurface : Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Post info
             Row(
               children: [
+                // Image
                 Padding(
                   padding: EdgeInsets.all(10.0.sp),
                   child: ClipRRect(
@@ -420,9 +424,12 @@ class NewsFeed extends StatelessWidget {
                     ),
                   ),
                 ),
+
                 SizedBox(
                   width: 5.w,
                 ),
+
+                // Name & Date time
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -432,6 +439,7 @@ class NewsFeed extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
+                          color: cubit.isDark ? Colors.white : Colors.black,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -450,7 +458,9 @@ class NewsFeed extends StatelessWidget {
                 // Post options
                 IconButton(
                   onPressed: () {},
-                  icon: FaIcon(FontAwesomeIcons.ellipsis, size: 20.sp,),
+                  icon: FaIcon(FontAwesomeIcons.ellipsis, size: 20.sp,
+                  color: cubit.isDark ? Colors.white : Colors.black,
+                  ),
                 ),
 
                 SizedBox(
@@ -459,7 +469,7 @@ class NewsFeed extends StatelessWidget {
               ],
             ),
 
-            separator,
+            separator(context),
 
             SizedBox(
               height: 2.h,
@@ -472,6 +482,7 @@ class NewsFeed extends StatelessWidget {
                 post.text,
                 style: TextStyle(
                   fontSize: 13.5.sp,
+                  color: cubit.isDark ? Colors.white : Colors.black,
                 ),
                 trimLines: 3,
                 trimMode: TrimMode.Line,
@@ -581,7 +592,7 @@ class NewsFeed extends StatelessWidget {
               height: 10.h,
             ),
 
-            separator,
+            separator(context),
 
             SizedBox(
               height: 10.h,
@@ -638,11 +649,19 @@ class NewsFeed extends StatelessWidget {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(MyIcons.heart, size: 21.sp,),
+                                    Icon(MyIcons.heart, size: 21.sp,
+                                      color: cubit.isDark ? Colors.white : Colors.black,),
+
                                     SizedBox(
                                       width: 5.w,
                                     ),
-                                    Text('Love', style: TextStyle(fontSize: 13.sp),),
+
+                                    Text('Love',
+                                      style: TextStyle(
+                                        fontSize: 13.sp,
+                                        color: cubit.isDark ? Colors.white : Colors.black,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               );
@@ -651,11 +670,15 @@ class NewsFeed extends StatelessWidget {
                             return Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(MyIcons.heart, size: 21.sp,),
+                                Icon(MyIcons.heart, size: 21.sp,
+                                  color: cubit.isDark ? Colors.white : Colors.black,
+                                ),
                                 SizedBox(
                                   width: 5.w,
                                 ),
-                                Text('Love', style: TextStyle(fontSize: 13.sp)),
+                                Text('Love',
+                                    style: TextStyle(fontSize: 13.sp,
+                                      color: cubit.isDark ? Colors.white : Colors.black,)),
                               ],
                             );
                           }
@@ -673,11 +696,12 @@ class NewsFeed extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(MyIcons.comment, size: 21.sp,),
+                          Icon(MyIcons.comment, size: 21.sp,color: cubit.isDark ? Colors.white : Colors.black,),
                           SizedBox(
                             width: 5.w,
                           ),
-                          Text('Comment', style: TextStyle(fontSize: 13.sp)),
+                          Text('Comment', style: TextStyle(
+                              fontSize: 13.sp, color: cubit.isDark ? Colors.white : Colors.black,)),
                         ],
                       ),
                     ),

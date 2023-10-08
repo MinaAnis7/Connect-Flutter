@@ -23,3 +23,25 @@ ThemeData lightTheme = ThemeData(
   ),
 
 );
+
+ThemeData DarkTheme = ThemeData(
+  fontFamily: 'Poppins',
+  appBarTheme: AppBarTheme(
+    systemOverlayStyle: SystemUiOverlayStyle(
+      statusBarIconBrightness: Brightness.light,
+      statusBarColor: DarkSurface,
+    ),
+    iconTheme: IconThemeData(color: Colors.white,),
+    color: DarkSurface,
+    elevation: 0.0,
+  ),
+  scaffoldBackgroundColor: DarkBackground,
+  bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    backgroundColor: DarkSurface,
+    type: BottomNavigationBarType.fixed,
+    unselectedItemColor: Colors.grey,
+    elevation: 15.0,
+    selectedItemColor: Colors.grey.shade100,
+  ),
+
+);

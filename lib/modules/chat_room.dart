@@ -53,7 +53,7 @@ class ChatRoom extends StatelessWidget {
                 title: Row(
                   children: [
                     CircleAvatar(
-                      backgroundColor: superBabyBlue,
+                      backgroundColor: cubit.isDark ? DarkBackground : superBabyBlue,
                       backgroundImage: NetworkImage(
                         receiver.image,
                       ),
@@ -67,7 +67,7 @@ class ChatRoom extends StatelessWidget {
                         receiver.name,
                         style: TextStyle(
                           fontSize: 18.sp,
-                          color: Colors.black,
+                          color: cubit.isDark ? Colors.white : Colors.black,
                           fontWeight: FontWeight.bold,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -88,123 +88,135 @@ class ChatRoom extends StatelessWidget {
                     children: [
                       // Messages
                       Expanded(
-                          child: SingleChildScrollView(
-                            physics: BouncingScrollPhysics(),
-                            reverse: true,
-                            padding: EdgeInsets.symmetric(horizontal: 15.w,),
-                            child: ConditionalBuilder(
-                              condition: cubit.messages.isNotEmpty,
-                              builder:(context) => ListView.builder(
-                                itemBuilder: (context, index) {
-                                  String message = cubit.messages[index].message;
+                          child: Container(
+                            color: cubit.isDark ? DarkBackground : Colors.white,
+                            child: SingleChildScrollView(
+                              physics: BouncingScrollPhysics(),
+                              reverse: true,
+                              padding: EdgeInsets.symmetric(horizontal: 15.w,),
+                              child: ConditionalBuilder(
+                                condition: cubit.messages.isNotEmpty,
+                                builder:(context) => ListView.builder(
+                                  itemBuilder: (context, index) {
+                                    String message = cubit.messages[index].message;
 
-                                  if(cubit.messages[index].senderId == CacheHelper.getData('userId'))
-                                    return myMessage(message);
-                                  else
-                                    return recipientMessage(message);
-                                },
-                                itemCount: cubit.messages.length,
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                              ),
-                              fallback:(context) => Center(child: Text(
-                                'No Messages.',
-                                style: TextStyle(
-                                  fontSize: 15.sp,
-                                  color: Colors.grey,
+                                    if(cubit.messages[index].senderId == CacheHelper.getData('userId'))
+                                      return myMessage(message, cubit.isDark);
+                                    else
+                                      return recipientMessage(message, cubit.isDark);
+                                  },
+                                  itemCount: cubit.messages.length,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
                                 ),
-                              ),),
+                                fallback:(context) => Center(child: Text(
+                                  'No Messages.',
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    color: Colors.grey,
+                                  ),
+                                ),),
+                              ),
                             ),
                           )),
 
                       // Typing Section
-                      Padding(
-                        padding: EdgeInsets.all(15.h),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            // TFF
-                            Expanded(
-                                child: Container(
-                                  clipBehavior: Clip.hardEdge,
-                                  decoration: BoxDecoration(
-                                    color: Colors.transparent,
-                                    borderRadius: BorderRadius.all(Radius.circular(17.sp)),
-                                  ),
-                                  child: TextFormField(
-                                    decoration: InputDecoration(
-                                      prefixIcon: MaterialButton(
-                                        onPressed: () async {
-                                          FocusScope.of(context).unfocus();
-                                          await Future.delayed(Duration(milliseconds: 100,));
-                                          cubit.changeEmojiVisibility();
-                                        },
-                                        minWidth: 40.w,
-                                        padding: EdgeInsets.zero,
-                                        child: Icon(
-                                          Icons.tag_faces_outlined,
-                                          size: 26.sp,
-                                          color: Colors.grey,
+                      Container(
+                        color: cubit.isDark ? DarkBackground : Colors.white,
+                        child: Padding(
+                          padding: EdgeInsets.all(15.h),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              // TFF
+                              Expanded(
+                                  child: Container(
+                                    clipBehavior: Clip.hardEdge,
+                                    decoration: BoxDecoration(
+                                      color: Colors.transparent,
+                                      borderRadius: BorderRadius.all(Radius.circular(17.sp)),
+                                    ),
+                                    child: TextFormField(
+                                      style: TextStyle(
+                                        color: cubit.isDark ? Colors.white : Colors.black,
+                                      ),
+                                      decoration: InputDecoration(
+                                        prefixIcon: MaterialButton(
+                                          onPressed: () async {
+                                            FocusScope.of(context).unfocus();
+                                            await Future.delayed(Duration(milliseconds: 100,));
+                                            cubit.changeEmojiVisibility();
+                                          },
+                                          minWidth: 40.w,
+                                          padding: EdgeInsets.zero,
+                                          child: Icon(
+                                            Icons.tag_faces_outlined,
+                                            size: 26.sp,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        contentPadding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 5.w,),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(17.sp),
+                                          borderSide: BorderSide.none,
+                                        ),
+                                        filled: true,
+                                        fillColor: cubit.isDark ? DarkBlue : superBabyBlue,
+                                        hintText: 'Your Message...',
+                                        hintStyle: TextStyle(
+                                          color: cubit.isDark ? Colors.grey : Colors.black,
                                         ),
                                       ),
-                                      contentPadding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 5.w,),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(17.sp),
-                                        borderSide: BorderSide.none,
-                                      ),
-                                      filled: true,
-                                      fillColor: superBabyBlue,
-                                      hintText: 'Your Message...',
+                                      minLines: 1,
+                                      controller: messageController,
+                                      maxLines: 5,
+                                      onTap: () {
+                                        if(cubit.emojiIsNotVisible == false)
+                                        {
+                                          cubit.changeEmojiVisibility();
+                                        }
+                                      },
                                     ),
-                                    minLines: 1,
-                                    controller: messageController,
-                                    maxLines: 5,
-                                    onTap: () {
-                                      if(cubit.emojiIsNotVisible == false)
+                                  )
+                              ),
+
+                              SizedBox(width: 10.w,),
+
+                              // Send Button
+                              Column(
+                                children: [
+                                  MaterialButton(
+                                    onPressed: (){
+                                      if(messageController.text == '')
                                       {
-                                        cubit.changeEmojiVisibility();
+                                        errorMsg('Please type Something');
+                                      }
+                                      else
+                                      {
+                                        cubit.sendMessage(messageController.text, receiver.id);
+                                        messageController.text = '';
                                       }
                                     },
-                                  ),
-                                )
-                            ),
-
-                            SizedBox(width: 10.w,),
-
-                            // Send Button
-                            Column(
-                              children: [
-                                MaterialButton(
-                                  onPressed: (){
-                                    if(messageController.text == '')
-                                    {
-                                      errorMsg('Please type Something');
-                                    }
-                                    else
-                                    {
-                                      cubit.sendMessage(messageController.text, receiver.id);
-                                      messageController.text = '';
-                                    }
-                                  },
-                                  elevation: 5,
-                                  highlightColor: Colors.blue[300],
-                                  padding: EdgeInsets.zero,
-                                  color: blue,
-                                  shape: CircleBorder(),
-                                  minWidth: 40.sp,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(10.0.sp),
-                                    child: Icon(
-                                      CupertinoIcons.paperplane_fill,
-                                      color: Colors.white,
-                                      size: 25.sp,
+                                    elevation: 5,
+                                    highlightColor: Colors.blue[300],
+                                    padding: EdgeInsets.zero,
+                                    color: cubit.isDark ? ko7ly : blue,
+                                    shape: CircleBorder(),
+                                    minWidth: 40.sp,
+                                    child: Padding(
+                                      padding: EdgeInsets.all(10.0.sp),
+                                      child: Icon(
+                                        CupertinoIcons.paperplane_fill,
+                                        color: Colors.white,
+                                        size: 25.sp,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(height: 1.h,),
-                              ],
-                            )
-                          ],
+                                  SizedBox(height: 1.h,),
+                                ],
+                              )
+                            ],
+                          ),
                         ),
                       ),
 
@@ -238,7 +250,7 @@ class ChatRoom extends StatelessWidget {
                                   horizontalSpacing: 0,
                                   gridPadding: EdgeInsets.zero,
                                   initCategory: Category.RECENT,
-                                  bgColor: superBabyBlue,
+                                  bgColor: cubit.isDark ? DarkSurface : superBabyBlue,
                                   indicatorColor: Colors.blue,
                                   iconColor: Colors.grey,
                                   iconColorSelected: blue,
@@ -275,7 +287,7 @@ class ChatRoom extends StatelessWidget {
     );
   }
 
-  Widget myMessage(String message)
+  Widget myMessage(String message, bool isDark)
   {
     return Align(
       alignment: Alignment.centerRight,
@@ -286,7 +298,7 @@ class ChatRoom extends StatelessWidget {
         ),
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
-          color: blue,
+          color: isDark ? ko7ly : blue,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(15.sp),
             topRight: Radius.circular(15.sp),
@@ -305,7 +317,7 @@ class ChatRoom extends StatelessWidget {
     );
   }
 
-  Widget recipientMessage(String message)
+  Widget recipientMessage(String message, bool isDark)
   {
     return Align(
       alignment: Alignment.centerLeft,
@@ -316,7 +328,7 @@ class ChatRoom extends StatelessWidget {
         ),
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
-          color: babyBlue,
+          color: isDark ? DarkSurface : babyBlue,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(15.sp),
             topRight: Radius.circular(15.sp),
@@ -326,7 +338,7 @@ class ChatRoom extends StatelessWidget {
         child: Text(
           message,
           style: TextStyle(
-            color: Colors.black,
+            color: isDark ? Colors.white : Colors.black,
             fontSize: 15.sp,
           ),
           maxLines: null,

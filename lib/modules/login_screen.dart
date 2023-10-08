@@ -39,7 +39,7 @@ class LoginScreen extends StatelessWidget {
           appBar: AppBar(
             title: logo,
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: cubit.isDark ? DarkBackground : Colors.white,
           body: GestureDetector(
             onTap: () => FocusManager.instance.primaryFocus!.unfocus(),
             child: Container(
@@ -61,7 +61,7 @@ class LoginScreen extends StatelessWidget {
                             Text(
                               'Login',
                               style: TextStyle(
-                                color: black,
+                                color: cubit.isDark ? Colors.white : black,
                                 fontSize: 30.0.sp,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -82,8 +82,13 @@ class LoginScreen extends StatelessWidget {
                             defaultTFF(
                                 hintText: 'Email',
                                 maxLines: 1,
+                                inputColor: cubit.isDark ? Colors.white : Colors.black,
+                                borderColor: cubit.isDark ? ko7ly : babyBlue,
+                                hintColor: cubit.isDark ? Colors.grey : Colors.grey.shade700,
+                                color: cubit.isDark ? DarkSurface : superBabyBlue,
                                 keyboardType: TextInputType.emailAddress,
-                                prefixIcon: Icon(Icons.alternate_email, size: 20.sp,),
+                                prefixIcon: Icon(Icons.alternate_email, size: 20.sp,
+                                color: cubit.isDark ? Colors.grey : Colors.grey.shade700,),
                                 controller: emailController,
                                 validator: (value) {
                                   if (value != null && value == '')
@@ -94,14 +99,20 @@ class LoginScreen extends StatelessWidget {
                             ),
                             defaultTFF(
                                 hintText: 'password',
+                                hintColor: cubit.isDark ? Colors.grey : Colors.grey.shade700,
                                 maxLines: 1,
+                                borderColor: cubit.isDark ? ko7ly : babyBlue,
+                                inputColor: cubit.isDark ? Colors.white : Colors.black,
+                                color: cubit.isDark ? DarkSurface : superBabyBlue,
                                 suffixIcon: cubit.obscureIcon,
+                                suffixColor: cubit.isDark ? Colors.grey : Colors.grey.shade700,
                                 isObscure: cubit.isObscure,
                                 suffixOnPressed: () {
                                   cubit.changeVisibility();
                                 },
                                 keyboardType: TextInputType.text,
-                                prefixIcon: Icon(Icons.lock_rounded, size: 20.sp,),
+                                prefixIcon: Icon(Icons.lock_rounded, size: 20.sp,
+                                color: cubit.isDark ? Colors.grey : Colors.grey.shade700,),
                                 controller: passwordController,
                                 validator: (value) {
                                   if (value != null && value == '')
@@ -181,14 +192,14 @@ class LoginScreen extends StatelessWidget {
                                   Text(
                                     'Login With Google',
                                     style: TextStyle(
-                                      color: black,
+                                      color: cubit.isDark ? Colors.white : black,
                                       fontSize: 15.0.sp,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ],
                               ),
-                              color: superBabyBlue,
+                              color: cubit.isDark ? DarkSurface : superBabyBlue,
                             ),
                           ],
                         ),
@@ -202,6 +213,7 @@ class LoginScreen extends StatelessWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 14.0.sp,
+                            color: cubit.isDark ? Colors.white : Colors.black
                           ),
                         ),
                         SizedBox(

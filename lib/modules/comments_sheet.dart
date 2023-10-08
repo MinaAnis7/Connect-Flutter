@@ -32,28 +32,27 @@ class CommentsSheet extends StatelessWidget
           return Scaffold(
             resizeToAvoidBottomInset: true,
             appBar: AppBar(
-              systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: superBabyBlue),
+              systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: cubit.isDark ? DarkSurface : superBabyBlue),
               leading: IconButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
                 icon: Icon(
                   Icons.arrow_back_ios,
-                  color: Colors.black,
+                  color: cubit.isDark ? Colors.white : Colors.black,
                 ),
               ),
-              backgroundColor: superBabyBlue,
               title: Text(
                 'Leave a Comment',
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black,
+                  color: cubit.isDark ? Colors.white : Colors.black,
                 ),
               ),
               centerTitle: true,
             ),
-            backgroundColor: superBabyBlue,
+            backgroundColor: cubit.isDark ? DarkSurface : superBabyBlue,
             body: GestureDetector(
               onTap: () {
                 commentFocus.unfocus();
@@ -68,7 +67,7 @@ class CommentsSheet extends StatelessWidget
                     child: Column(
                       children: [
 
-                        separator,
+                        separator(context),
 
                         SizedBox(
                           height: 10.h,
@@ -130,7 +129,7 @@ class CommentsSheet extends StatelessWidget
                                 if (!commentFocus.hasFocus)
                                   CircleAvatar(
                                     radius: 23.sp,
-                                    backgroundColor: Colors.white,
+                                    backgroundColor: cubit.isDark ? DarkBackground : Colors.white,
                                     backgroundImage: NetworkImage(
                                         cubit.userModel!.image),
                                   ),
@@ -141,11 +140,14 @@ class CommentsSheet extends StatelessWidget
                                   child: TFF_NoSuffix(
                                       hintText:
                                       'Write a comment...',
+                                      hintColor: cubit.isDark? Colors.white : Colors.black,
                                       keyboardType:
                                       TextInputType.text,
                                       controller:
                                       commentController,
-                                      color: Colors.white,
+                                      inputColor: cubit.isDark ? Colors.white : Colors.black,
+                                      borderColor: cubit.isDark ? DarkBlue : blue,
+                                      color: cubit.isDark ? DarkBackground : Colors.white,
                                       focus: commentFocus,
                                       maxLines: 3,
                                       minLines: 1,
@@ -212,7 +214,7 @@ class CommentsSheet extends StatelessWidget
           fit: FlexFit.loose,
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: cubit.isDark ? DarkBackground : Colors.white,
               borderRadius: BorderRadius.circular(10.sp),
             ),
             padding: EdgeInsets.all(10.sp),
@@ -226,6 +228,7 @@ class CommentsSheet extends StatelessWidget
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14.sp,
+                    color: cubit.isDark ? Colors.white : Colors.black,
                   ),
                 ),
                 SizedBox(
@@ -236,6 +239,7 @@ class CommentsSheet extends StatelessWidget
                   comment.comment,
                   style: TextStyle(
                     fontSize: 14.sp,
+                    color: cubit.isDark ? Colors.white : Colors.black,
                   ),
                 ),
               ],

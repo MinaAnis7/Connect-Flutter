@@ -28,7 +28,7 @@ class LetMeConnect extends StatelessWidget {
                   width: double.infinity,
                   padding: EdgeInsets.all(15.sp),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: cubit.isDark ? DarkSurface : Colors.white,
                     borderRadius: BorderRadius.circular(12.sp),
                   ),
                   child: SingleChildScrollView(
@@ -42,6 +42,7 @@ class LetMeConnect extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
+                            color: cubit.isDark ? Colors.white : Colors.black,
                           ),
                         ),
 
@@ -50,7 +51,7 @@ class LetMeConnect extends StatelessWidget {
                         ListView.separated(
                           physics: NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) => connectionItemBuilder(cubit.allUsers[index], context),
-                          separatorBuilder:(context, index) => separator,
+                          separatorBuilder:(context, index) => separator(context),
                           itemCount: cubit.allUsers.length,
                           shrinkWrap: true,
                         ),
@@ -86,7 +87,7 @@ class LetMeConnect extends StatelessWidget {
                 children: [
                   // Image
                   CircleAvatar(
-                    backgroundColor: superBabyBlue,
+                    backgroundColor: cubit.isDark ? DarkBackground : superBabyBlue,
                     radius: 30.sp,
                     backgroundImage: NetworkImage(user.image),
                   ),
@@ -106,7 +107,7 @@ class LetMeConnect extends StatelessWidget {
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 15.sp,
-                              color: Colors.black,
+                              color: cubit.isDark ? Colors.white : Colors.black,
                               overflow: TextOverflow.ellipsis),
                           maxLines: 1,
                         ),

@@ -45,7 +45,7 @@ class EditProfile extends StatelessWidget {
             return true;
           },
           child: Scaffold(
-            backgroundColor: Colors.white,
+            backgroundColor: cubit.isDark ? DarkBackground : Colors.white,
             appBar: AppBar(
               leading: IconButton(
                 onPressed: () {
@@ -58,7 +58,7 @@ class EditProfile extends StatelessWidget {
               title: Text(
                 'Edit profile',
                 style: TextStyle(
-                    color: Colors.black,
+                    color: cubit.isDark ? Colors.white : Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: 20.0.sp),
               ),
@@ -85,313 +85,332 @@ class EditProfile extends StatelessWidget {
                 )
               ],
             ),
-            body: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w),
-              child: Container(
-                color: Colors.white,
-                child: Column(
-                  children: [
-                    if (state is UpdateUserProfileLoadingState)
-                      Column(
-                        children: [
-                          LinearProgressIndicator(color: blue,),
-                          SizedBox(height: 5.h,)
-                        ],
-                      ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        physics: BouncingScrollPhysics(),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+            body: GestureDetector(
+              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.w),
+                child: Container(
+                  color: cubit.isDark ? DarkBackground : Colors.white,
+                  child: Column(
+                    children: [
+                      if (state is UpdateUserProfileLoadingState)
+                        Column(
                           children: [
-                            // Cover & Profile Image
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.sp),
-                              ),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    height: height / 3.5,
-                                    child: Stack(
-                                      alignment: Alignment.bottomCenter,
-                                      children: [
-                                        // Cover Image
-                                        Align(
-                                          alignment: Alignment.topCenter,
-                                          child: Stack(
-                                            alignment: Alignment.topRight,
-                                            children: [
-                                              ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        10.sp),
-                                                // Cover: From Gallery or From Database
-                                                child: ConditionalBuilder(
-                                                  condition:
-                                                      cubit.cover != null,
-                                                  builder: (context) =>
-                                                      Image.file(
-                                                    cubit.cover!,
-                                                    fit: BoxFit.cover,
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height /
-                                                            4.5,
-                                                    width: double.infinity,
-                                                  ),
-                                                  fallback: (context) => Image(
-                                                    image: NetworkImage(
-                                                        cubit.userModel!.cover),
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height /
-                                                            4.5,
-                                                    width: double.infinity,
-                                                    fit: BoxFit.cover,
+                            LinearProgressIndicator(color: blue,),
+                            SizedBox(height: 5.h,)
+                          ],
+                        ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          physics: BouncingScrollPhysics(),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Cover & Profile Image
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.sp),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: height / 3.5,
+                                      child: Stack(
+                                        alignment: Alignment.bottomCenter,
+                                        children: [
+                                          // Cover Image
+                                          Align(
+                                            alignment: Alignment.topCenter,
+                                            child: Stack(
+                                              alignment: Alignment.topRight,
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10.sp),
+                                                  // Cover: From Gallery or From Database
+                                                  child: ConditionalBuilder(
+                                                    condition:
+                                                        cubit.cover != null,
+                                                    builder: (context) =>
+                                                        Image.file(
+                                                      cubit.cover!,
+                                                      fit: BoxFit.cover,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height /
+                                                              4.5,
+                                                      width: double.infinity,
+                                                    ),
+                                                    fallback: (context) => Image(
+                                                      image: NetworkImage(
+                                                          cubit.userModel!.cover),
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height /
+                                                              4.5,
+                                                      width: double.infinity,
+                                                      fit: BoxFit.cover,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              // Edit Cover
-                                              Padding(
-                                                padding: EdgeInsets.all(3.0),
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    ImagePicker()
-                                                        .pickImage(
-                                                            source: ImageSource
-                                                                .gallery)
-                                                        .then((value) {
-                                                      cubit.cover =
-                                                          File(value!.path);
-                                                      cubit.changeImageState();
-                                                    });
-                                                  },
-                                                  child: CircleAvatar(
-                                                    backgroundColor:
-                                                        Colors.white,
-                                                    radius: 16.sp,
-                                                    child: Icon(
-                                                      MyIcons.pencil_1,
-                                                      color: blue,
-                                                      size: 20.sp,
+                                                // Edit Cover
+                                                Padding(
+                                                  padding: EdgeInsets.all(3.0),
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      ImagePicker()
+                                                          .pickImage(
+                                                              source: ImageSource
+                                                                  .gallery)
+                                                          .then((value) {
+                                                        cubit.cover =
+                                                            File(value!.path);
+                                                        cubit.changeImageState();
+                                                      });
+                                                    },
+                                                    child: CircleAvatar(
+                                                      backgroundColor:
+                                                          cubit.isDark ? DarkSurface : Colors.white,
+                                                      radius: 16.sp,
+                                                      child: Icon(
+                                                        MyIcons.pencil_1,
+                                                        color: cubit.isDark ? Colors.white : blue,
+                                                        size: 20.sp,
+                                                      ),
                                                     ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+
+                                          //Profile Image
+                                          Stack(
+                                            alignment: Alignment.topRight,
+                                            children: [
+                                              Stack(
+                                                  alignment: Alignment.center,
+                                                  children: [
+                                                    CircleAvatar(
+                                                      radius: 52.sp,
+                                                      backgroundColor:
+                                                          superBabyBlue,
+                                                    ),
+                                                    CircleAvatar(
+                                                      radius: 50.sp,
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                      child: ConditionalBuilder(
+                                                        condition:
+                                                            cubit.image != null,
+                                                        builder: (context) =>
+                                                            CircleAvatar(
+                                                          radius: 50.sp,
+                                                          backgroundColor:
+                                                              Colors.white,
+                                                          backgroundImage:
+                                                              FileImage(
+                                                                  cubit.image!),
+                                                        ),
+                                                        fallback: (context) =>
+                                                            CircleAvatar(
+                                                          radius: 50.sp,
+                                                          backgroundColor:
+                                                              Colors.white,
+                                                          backgroundImage:
+                                                              NetworkImage(cubit
+                                                                  .userModel!
+                                                                  .image),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ]),
+                                              // Update Profile
+                                              InkWell(
+                                                onTap: () {
+                                                  ImagePicker()
+                                                      .pickImage(
+                                                          source:
+                                                              ImageSource.gallery)
+                                                      .then((value) {
+                                                    cubit.image =
+                                                        File(value!.path);
+                                                    cubit.changeImageState();
+                                                  });
+                                                },
+                                                child: CircleAvatar(
+                                                  backgroundColor: cubit.isDark ? DarkSurface : Colors.white,
+                                                  radius: 15.sp,
+                                                  child: Icon(
+                                                    MyIcons.camera,
+                                                    color: cubit.isDark ? Colors.white : blue,
+                                                    size: 20.sp,
                                                   ),
                                                 ),
                                               ),
                                             ],
                                           ),
-                                        ),
-
-                                        //Profile Image
-                                        Stack(
-                                          alignment: Alignment.topRight,
-                                          children: [
-                                            Stack(
-                                                alignment: Alignment.center,
-                                                children: [
-                                                  CircleAvatar(
-                                                    radius: 52.sp,
-                                                    backgroundColor:
-                                                        superBabyBlue,
-                                                  ),
-                                                  CircleAvatar(
-                                                    radius: 50.sp,
-                                                    backgroundColor:
-                                                        Colors.white,
-                                                    child: ConditionalBuilder(
-                                                      condition:
-                                                          cubit.image != null,
-                                                      builder: (context) =>
-                                                          CircleAvatar(
-                                                        radius: 50.sp,
-                                                        backgroundColor:
-                                                            Colors.white,
-                                                        backgroundImage:
-                                                            FileImage(
-                                                                cubit.image!),
-                                                      ),
-                                                      fallback: (context) =>
-                                                          CircleAvatar(
-                                                        radius: 50.sp,
-                                                        backgroundColor:
-                                                            Colors.white,
-                                                        backgroundImage:
-                                                            NetworkImage(cubit
-                                                                .userModel!
-                                                                .image),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ]),
-                                            // Update Profile
-                                            InkWell(
-                                              onTap: () {
-                                                ImagePicker()
-                                                    .pickImage(
-                                                        source:
-                                                            ImageSource.gallery)
-                                                    .then((value) {
-                                                  cubit.image =
-                                                      File(value!.path);
-                                                  cubit.changeImageState();
-                                                });
-                                              },
-                                              child: CircleAvatar(
-                                                backgroundColor: Colors.white,
-                                                radius: 15.sp,
-                                                child: Icon(
-                                                  MyIcons.camera,
-                                                  color: blue,
-                                                  size: 20.sp,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 10.h,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10.h,
-                            ),
-
-                            Padding(
-                              padding: EdgeInsets.only(left: 5.w),
-                              child: Text(
-                                'Edit Your Info:',
-                                style: TextStyle(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.bold,
+                                    SizedBox(
+                                      height: 10.h,
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-
-                            SizedBox(
-                              height: 10.h,
-                            ),
-                            Form(
-                              key: formKey,
-                              child: Column(
-                                children: [
-                                  defaultTFF(
-                                    hintText: 'Edit Name',
-                                    keyboardType: TextInputType.text,
-                                    prefixIcon: Icon(MyIcons.user_1),
-                                    validator: (value) {
-                                      if (value != null && value != '')
-                                        return 'Please, Enter Your Name!';
-                                    },
-                                    controller: nameController,
-                                  ),
-                                  SizedBox(
-                                    height: 10.h,
-                                  ),
-                                  defaultTFF(
-                                    hintText: 'Edit Phone',
-                                    keyboardType: TextInputType.phone,
-                                    prefixIcon: Icon(MyIcons.phone_handset),
-                                    validator: (value) {
-                                      if (value != null && value != '')
-                                        return 'Please, Enter Your phone!';
-                                    },
-                                    controller: phoneController,
-                                  ),
-                                  SizedBox(
-                                    height: 10.h,
-                                  ),
-                                  defaultTFF(
-                                    hintText: 'Edit Bio',
-                                    keyboardType: TextInputType.text,
-                                    prefixIcon: Icon(FontAwesomeIcons.info),
-                                    validator: (value) {
-                                      if (value != null && value != '')
-                                        return 'Please, Enter Your Bio!';
-                                    },
-                                    controller: bioController,
-                                  ),
-                                ],
+                              SizedBox(
+                                height: 10.h,
                               ),
-                            ),
-                          ],
+
+                              Padding(
+                                padding: EdgeInsets.only(left: 5.w),
+                                child: Text(
+                                  'Edit Your Info:',
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.bold,
+                                    color: cubit.isDark ? Colors.white : Colors.black,
+                                  ),
+                                ),
+                              ),
+
+                              SizedBox(
+                                height: 10.h,
+                              ),
+                              Form(
+                                key: formKey,
+                                child: Column(
+                                  children: [
+                                    defaultTFF(
+                                      hintText: 'Edit Name',
+                                      hintColor: cubit.isDark ? Colors.grey : Colors.grey.shade700,
+                                      keyboardType: TextInputType.text,
+                                      borderColor: cubit.isDark ? ko7ly : babyBlue,
+                                      color: cubit.isDark ? DarkSurface : superBabyBlue,
+                                      inputColor: cubit.isDark ? Colors.white : Colors.black,
+                                      prefixIcon: Icon(MyIcons.user_1,
+                                      color: cubit.isDark ? Colors.grey : Colors.grey.shade700,),
+                                      validator: (value) {
+                                        if (value != null && value != '')
+                                          return 'Please, Enter Your Name!';
+                                      },
+                                      controller: nameController,
+                                    ),
+                                    SizedBox(
+                                      height: 10.h,
+                                    ),
+                                    defaultTFF(
+                                      hintText: 'Edit Phone',
+                                      hintColor: cubit.isDark ? Colors.grey : Colors.grey.shade700,
+                                      keyboardType: TextInputType.phone,
+                                      borderColor: cubit.isDark ? ko7ly : babyBlue,
+                                      color: cubit.isDark ? DarkSurface : superBabyBlue,
+                                      inputColor: cubit.isDark ? Colors.white : Colors.black,
+                                      prefixIcon: Icon(MyIcons.phone_handset,
+                                      color: cubit.isDark ? Colors.grey : Colors.grey.shade700,),
+                                      validator: (value) {
+                                        if (value != null && value != '')
+                                          return 'Please, Enter Your phone!';
+                                      },
+                                      controller: phoneController,
+                                    ),
+                                    SizedBox(
+                                      height: 10.h,
+                                    ),
+                                    defaultTFF(
+                                      hintText: 'Edit Bio',
+                                      hintColor: cubit.isDark ? Colors.grey : Colors.grey.shade700,
+                                      keyboardType: TextInputType.text,
+                                      borderColor: cubit.isDark ? ko7ly : babyBlue,
+                                      color: cubit.isDark ? DarkSurface : superBabyBlue,
+                                      inputColor: cubit.isDark ? Colors.white : Colors.black,
+                                      prefixIcon: Icon(FontAwesomeIcons.info,
+                                      color: cubit.isDark ? Colors.grey : Colors.grey.shade700,),
+                                      validator: (value) {
+                                        if (value != null && value != '')
+                                          return 'Please, Enter Your Bio!';
+                                      },
+                                      controller: bioController,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
 
-                    // Update Buttons
-                    Row(
-                      children: [
-                        //Update Profile Picture
-                        if (cubit.image != null)
-                          ConditionalBuilder(
-                            condition: state is StoreImageLoadingState,
-                            builder: (context) => Expanded(
-                                child: Center(
-                              child: CircularProgressIndicator(
-                                color: blue,
+                      // Update Buttons
+                      Row(
+                        children: [
+                          //Update Profile Picture
+                          if (cubit.image != null)
+                            ConditionalBuilder(
+                              condition: state is StoreImageLoadingState,
+                              builder: (context) => Expanded(
+                                  child: Center(
+                                child: CircularProgressIndicator(
+                                  color: blue,
+                                ),
+                              )),
+                              fallback: (context) => Expanded(
+                                child: defaultButton(
+                                    onPressed: () {
+                                      cubit.updateProfile();
+                                    },
+                                    child: Text(
+                                      'UPDATE PROFILE',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15.sp,
+                                      ),
+                                    ),
+                                    color: blue),
                               ),
-                            )),
-                            fallback: (context) => Expanded(
-                              child: defaultButton(
+                            ),
+
+                          SizedBox(
+                            width: 10.w,
+                          ),
+
+                          if (cubit.cover != null)
+                            ConditionalBuilder(
+                              condition: state is StoreCoverLoadingState,
+                              builder: (context) => Expanded(
+                                  child: Center(
+                                child: CircularProgressIndicator(
+                                  color: blue,
+                                ),
+                              )),
+                              fallback: (context) => Expanded(
+                                child: defaultButton(
                                   onPressed: () {
-                                    cubit.updateProfile();
+                                    cubit.updateCover();
                                   },
                                   child: Text(
-                                    'UPDATE PROFILE',
+                                    'UPDATE COVER',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 15.sp,
                                     ),
                                   ),
-                                  color: blue),
-                            ),
-                          ),
-
-                        SizedBox(
-                          width: 10.w,
-                        ),
-
-                        if (cubit.cover != null)
-                          ConditionalBuilder(
-                            condition: state is StoreCoverLoadingState,
-                            builder: (context) => Expanded(
-                                child: Center(
-                              child: CircularProgressIndicator(
-                                color: blue,
-                              ),
-                            )),
-                            fallback: (context) => Expanded(
-                              child: defaultButton(
-                                onPressed: () {
-                                  cubit.updateCover();
-                                },
-                                child: Text(
-                                  'UPDATE COVER',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15.sp,
-                                  ),
+                                  color: blue,
                                 ),
-                                color: blue,
                               ),
                             ),
-                          ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                  ],
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -35,6 +35,10 @@ Widget defaultTFF({
   TextEditingController? controller,
   String? Function(String?)? validator,
   Color? color,
+  Color? inputColor,
+  Color? hintColor,
+  Color? suffixColor,
+  Color? borderColor,
   FocusNode? focus,
   int? maxLines,
   int? minLines,
@@ -52,22 +56,24 @@ Widget defaultTFF({
         onChanged: onChanged,
         validator: validator,
         obscureText: isObscure,
-        style: TextStyle(color: black, fontSize: 15.sp),
+        style: TextStyle(color: inputColor ?? black, fontSize: 15.sp),
         decoration: InputDecoration(
           prefixIcon: prefixIcon,
           isDense: true,
           suffixIcon: IconButton(
-            icon: Icon(suffixIcon, size: 20.sp,),
+            icon: Icon(suffixIcon, size: 20.sp, color: suffixColor,),
             onPressed: suffixOnPressed,
           ),
           fillColor: color ?? superBabyBlue,
           filled: true,
           hintText: hintText,
-          hintStyle: TextStyle(color: Colors.black54),
+          hintStyle: TextStyle(color: hintColor ?? Colors.black54),
           focusColor: blue,
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20.0.sp),
-            borderSide: BorderSide(color: babyBlue, width: 0.0),
+            borderSide: BorderSide(
+                color: borderColor ?? babyBlue,
+                width: 2.0),
           ),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(style: BorderStyle.none),
@@ -93,6 +99,9 @@ Widget defaultTFF({
 
 Widget TFF_NoSuffix({
   required String hintText,
+  Color? hintColor,
+  Color? inputColor,
+  Color? borderColor,
   required TextInputType keyboardType,
   Widget? prefixIcon,
   bool isObscure = false,
@@ -120,18 +129,18 @@ Widget TFF_NoSuffix({
         onChanged: onChanged,
         validator: validator,
         obscureText: isObscure,
-        style: TextStyle(color: black, fontSize: 15.sp),
+        style: TextStyle(color: inputColor ?? black, fontSize: 15.sp),
         decoration: InputDecoration(
           prefixIcon: prefixIcon,
           isDense: true,
           fillColor: color ?? superBabyBlue,
           filled: true,
           hintText: hintText,
-          hintStyle: TextStyle(color: Colors.black54),
+          hintStyle: TextStyle(color: hintColor ?? Colors.white),
           focusColor: blue,
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20.0.sp),
-            borderSide: BorderSide(color: babyBlue, width: 0.0),
+            borderSide: BorderSide(color: borderColor ?? babyBlue, width: 1.0),
           ),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(style: BorderStyle.none),
@@ -262,12 +271,12 @@ void msg(String msg) {
 
 //#region Separator
 
-Widget separator = Padding(
+Widget separator(BuildContext context) => Padding(
   padding: EdgeInsets.symmetric(horizontal: 10.0),
   child: Container(
     height: 1.0.h,
     width: double.infinity,
-    color: Colors.grey[300],
+    color: AppCubit.get(context).isDark ? Colors.grey.shade600 : Colors.grey[300],
   ),
 );
 

@@ -99,3 +99,5 @@ class GetConnectionsSuccessState extends AppStates {}
 class GetConnectionsErrorState extends AppStates {}
 
 class RejectNotificationState extends AppStates {}
+
+class ChangeThemeMode extends AppStates {}

@@ -31,12 +31,11 @@ class NotificationScreen extends StatelessWidget {
               style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black
+                  color: cubit.isDark ? Colors.white : Colors.black,
               ),
             ),
             centerTitle: true,
           ),
-          backgroundColor: superBabyBlue,
           body: SafeArea(
               child: ConditionalBuilder(
                 condition: cubit.notifications.isNotEmpty,
@@ -56,7 +55,7 @@ class NotificationScreen extends StatelessWidget {
                         padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: cubit.isDark ? DarkSurface : Colors.white,
                             borderRadius: BorderRadius.circular(13.5.sp),
                           ),
                           child: ListView.separated(
@@ -64,7 +63,7 @@ class NotificationScreen extends StatelessWidget {
                               return notificationItemBuilder(cubit.notifications[index], cubit, index);
                             },
                             separatorBuilder: (context, index) {
-                              return separator;
+                              return separator(context);
                             },
                             itemCount: cubit.notifications.length,
                             shrinkWrap: true,
@@ -78,6 +77,7 @@ class NotificationScreen extends StatelessWidget {
                 fallback: (context) {
                   return Center(child: Text(
                     "You don't have any notifications",
+                    style: TextStyle(color: cubit.isDark ? Colors.white : Colors.black,),
                   ),);
                 },
               )
@@ -109,7 +109,7 @@ class NotificationScreen extends StatelessWidget {
                 children: [
                   // Image
                   CircleAvatar(
-                    backgroundColor: superBabyBlue,
+                    backgroundColor: cubit.isDark ? DarkBackground : superBabyBlue,
                     radius: 30.sp,
                     backgroundImage: NetworkImage(user.image),
                   ),
@@ -136,14 +136,14 @@ class NotificationScreen extends StatelessWidget {
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14.sp,
-                                        color: Colors.black,
+                                        color: cubit.isDark ? Colors.white : Colors.black,
                                         overflow: TextOverflow.ellipsis),
                                     ),
                                   TextSpan(
                                     text: " Wants To Connect With You!",
                                     style: TextStyle(
                                       fontSize: 14.sp,
-                                      color: Colors.black,
+                                      color: cubit.isDark ? Colors.white : Colors.black,
                                       overflow: TextOverflow.ellipsis),
                                   ),
                                 ],

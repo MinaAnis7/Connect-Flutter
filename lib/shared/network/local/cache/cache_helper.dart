@@ -14,6 +14,11 @@ class CacheHelper
     return sharedPreferences.setString(key, value);
   }
 
+  static Future<bool> putBool(String key, bool value)
+  {
+    return sharedPreferences.setBool(key, value);
+  }
+
   static dynamic getData(key)
   {
     return sharedPreferences.get(key);

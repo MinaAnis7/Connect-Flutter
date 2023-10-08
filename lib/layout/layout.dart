@@ -32,7 +32,7 @@ class Layout extends StatelessWidget {
                 title: Text(
                   cubit.titles[cubit.currentIndex],
                   style: TextStyle(
-                      color: Colors.black,
+                      color: cubit.isDark ? Colors.white : Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 18.0.sp),
                 ),

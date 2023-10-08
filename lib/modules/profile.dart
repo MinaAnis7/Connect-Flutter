@@ -57,7 +57,7 @@ class Profile extends StatelessWidget {
                           Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10.sp),
-                              color: Colors.white,
+                              color: cubit.isDark ? DarkSurface : Colors.white,
                             ),
                             child: Column(
                               children: [
@@ -111,13 +111,14 @@ class Profile extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 17.sp,
                                     fontWeight: FontWeight.bold,
+                                    color: cubit.isDark ? Colors.white : Colors.black,
                                   ),
                                 ),
                                 // Bio
                                 Text(
                                   cubit.userModel!.bio,
                                   style: TextStyle(
-                                    color: Colors.black54,
+                                    color: cubit.isDark ? Colors.white : Colors.black54,
                                     fontSize: 12.9.sp,
                                   ),
                                 ),
@@ -137,12 +138,14 @@ class Profile extends StatelessWidget {
                                                   .numOfConnects}',
                                               style: TextStyle(
                                                 fontSize: 20.sp,
+                                                color: cubit.isDark ? Colors.white : Colors.black,
                                               ),
                                             ),
                                             Text(
                                               'Connections',
                                               style: TextStyle(
                                                 fontSize: 12.5.sp,
+                                                color: cubit.isDark ? Colors.white : Colors.black,
                                               ),
                                             ),
                                           ],
@@ -166,14 +169,14 @@ class Profile extends StatelessWidget {
                                                 'Edit Profile',
                                                 style: TextStyle(
                                                   fontSize: 14.sp,
-                                                  color: Colors.blue,
+                                                  color: cubit.isDark? Colors.white : Colors.blue,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                               SizedBox(width: 5.w,),
                                             ],
                                           ),
-                                          color: superBabyBlue,
+                                          color: cubit.isDark ? ko7ly : superBabyBlue,
                                         ),
                                       ),
                                     ],
@@ -194,7 +197,7 @@ class Profile extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.sp),
                               ),
-                              color: Colors.white,
+                              color: cubit.isDark ? DarkSurface : Colors.white,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -237,7 +240,7 @@ class Profile extends StatelessWidget {
                                   ),
 
                                   // Separator
-                                  separator,
+                                  separator(context),
 
                                   //Buttons
                                   Row(
@@ -459,8 +462,8 @@ class Profile extends StatelessWidget {
     );
   }
 
-  Widget postBuilder(BuildContext context_main, PostModel post, int index,
-      AppCubit cubit, state) {
+  Widget postBuilder(
+      BuildContext context, PostModel post, int index, AppCubit cubit, state) {
     return Container(
       width: double.infinity,
       child: Card(
@@ -469,13 +472,14 @@ class Profile extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.sp),
         ),
-        color: Colors.white,
+        color: cubit.isDark ? DarkSurface : Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Post info
             Row(
               children: [
+                // Image
                 Padding(
                   padding: EdgeInsets.all(10.0.sp),
                   child: ClipRRect(
@@ -490,9 +494,12 @@ class Profile extends StatelessWidget {
                     ),
                   ),
                 ),
+
                 SizedBox(
                   width: 5.w,
                 ),
+
+                // Name & Date time
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -502,6 +509,7 @@ class Profile extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
+                          color: cubit.isDark ? Colors.white : Colors.black,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -519,23 +527,25 @@ class Profile extends StatelessWidget {
 
                 // Post options
                 PopupMenuButton(
+                  color: cubit.isDark? Colors.white : Colors.black,
                   itemBuilder: (context) {
                     return [
                       PopupMenuItem(
-                          child: Row(
-                            children: [
-                              Icon(MyIcons.trash, color: Colors.red, size: 20.sp,),
-                              SizedBox(width: 7.w,),
-                              Text("Delete", style: TextStyle(fontSize: 14.sp),),
-                            ],
-                          ),
+                        child: Row(
+                          children: [
+                            Icon(MyIcons.trash, color: Colors.red, size: 20.sp,),
+                            SizedBox(width: 7.w,),
+                            Text("Delete", style: TextStyle(fontSize: 14.sp),),
+                          ],
+                        ),
                         onTap: () {
-                            cubit.deletePost(post);
+                          cubit.deletePost(post);
                         },
                       ),
                     ];
                   },
                 ),
+
 
                 SizedBox(
                   width: 3.w,
@@ -543,7 +553,7 @@ class Profile extends StatelessWidget {
               ],
             ),
 
-            separator,
+            separator(context),
 
             SizedBox(
               height: 2.h,
@@ -556,6 +566,7 @@ class Profile extends StatelessWidget {
                 post.text,
                 style: TextStyle(
                   fontSize: 13.5.sp,
+                  color: cubit.isDark ? Colors.white : Colors.black,
                 ),
                 trimLines: 3,
                 trimMode: TrimMode.Line,
@@ -573,17 +584,16 @@ class Profile extends StatelessWidget {
                   child: Wrap(
                     children: List.generate(
                       post.tags.length,
-                          (index) =>
-                          InkWell(
-                            child: Text(
-                              '#' + post.tags[index],
-                              style: TextStyle(
-                                fontSize: 12.5.sp,
-                                color: blue,
-                              ),
-                            ),
-                            onTap: () {},
+                          (index) => InkWell(
+                        child: Text(
+                          '#' + post.tags[index],
+                          style: TextStyle(
+                            fontSize: 12.5.sp,
+                            color: blue,
                           ),
+                        ),
+                        onTap: () {},
+                      ),
                     ),
                     spacing: 5.w,
                   )),
@@ -596,10 +606,7 @@ class Profile extends StatelessWidget {
             if (post.postImage != null)
               Container(
                 constraints: BoxConstraints(
-                  maxHeight: MediaQuery
-                      .of(context_main)
-                      .size
-                      .height / 2,
+                  maxHeight: MediaQuery.of(context).size.height / 2,
                 ),
                 child: Image.network(
                   post.postImage!,
@@ -655,8 +662,8 @@ class Profile extends StatelessWidget {
                       Text(
                         '${post.numOfComments}',
                         style: TextStyle(
-                            color: blue,
-                            fontSize: 13.sp
+                          color: blue,
+                          fontSize: 13.sp,
                         ),
                       ),
                     ],
@@ -669,7 +676,7 @@ class Profile extends StatelessWidget {
               height: 10.h,
             ),
 
-            separator,
+            separator(context),
 
             SizedBox(
               height: 10.h,
@@ -726,12 +733,19 @@ class Profile extends StatelessWidget {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(MyIcons.heart, size: 21.sp,),
+                                    Icon(MyIcons.heart, size: 21.sp,
+                                      color: cubit.isDark ? Colors.white : Colors.black,),
+
                                     SizedBox(
                                       width: 5.w,
                                     ),
+
                                     Text('Love',
-                                      style: TextStyle(fontSize: 13.sp),),
+                                      style: TextStyle(
+                                        fontSize: 13.sp,
+                                        color: cubit.isDark ? Colors.white : Colors.black,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               );
@@ -740,11 +754,15 @@ class Profile extends StatelessWidget {
                             return Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(MyIcons.heart, size: 21.sp,),
+                                Icon(MyIcons.heart, size: 21.sp,
+                                  color: cubit.isDark ? Colors.white : Colors.black,
+                                ),
                                 SizedBox(
                                   width: 5.w,
                                 ),
-                                Text('Love', style: TextStyle(fontSize: 13.sp)),
+                                Text('Love',
+                                    style: TextStyle(fontSize: 13.sp,
+                                      color: cubit.isDark ? Colors.white : Colors.black,)),
                               ],
                             );
                           }
@@ -757,18 +775,17 @@ class Profile extends StatelessWidget {
                     child: InkWell(
                       onTap: () {
                         cubit.getComments(post);
-                        Navigator.push(
-                            context_main, PageTransition(type: PageTransitionType
-                            .bottomToTop, child: CommentsSheet(post)));
+                        Navigator.push(context, PageTransition(type: PageTransitionType.bottomToTop, child: CommentsSheet(post)));
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(MyIcons.comment, size: 21.sp,),
+                          Icon(MyIcons.comment, size: 21.sp,color: cubit.isDark ? Colors.white : Colors.black,),
                           SizedBox(
                             width: 5.w,
                           ),
-                          Text('Comment', style: TextStyle(fontSize: 13.sp)),
+                          Text('Comment', style: TextStyle(
+                            fontSize: 13.sp, color: cubit.isDark ? Colors.white : Colors.black,)),
                         ],
                       ),
                     ),
