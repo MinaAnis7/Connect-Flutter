@@ -57,6 +57,7 @@ class GetPostsErrorState extends AppStates {}
 class CreateTagState extends AppStates {}
 
 class GetProfilePostsState extends AppStates {}
+class GetProfilePostsLoadingState extends AppStates {}
 
 class LovePostSuccessState extends AppStates {}
 class LovePostErrorState extends AppStates {}
@@ -71,6 +72,7 @@ class UpdateNumOfCommentsSuccessState extends AppStates {}
 class UpdateNumOfCommentsErrorState extends AppStates {}
 
 class GetCommentsLoadingState extends AppStates {}
+class GetCommentsLoadingEndState extends AppStates {}
 class GetCommentsSuccessState extends AppStates {}
 class GetCommentsErrorState extends AppStates {}
 

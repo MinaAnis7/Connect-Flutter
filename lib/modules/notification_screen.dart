@@ -218,7 +218,7 @@ class NotificationScreen extends StatelessWidget {
                   children: [
                     // Image
                     CircleAvatar(
-                      backgroundColor: superBabyBlue,
+                      backgroundColor: cubit.isDark ? DarkBackground : superBabyBlue,
                       radius: 30.sp,
                       backgroundImage: NetworkImage(user.image),
                     ),
@@ -245,14 +245,14 @@ class NotificationScreen extends StatelessWidget {
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 14.sp,
-                                            color: Colors.black,
+                                            color: cubit.isDark ? Colors.white : Colors.black,
                                             overflow: TextOverflow.ellipsis),
                                       ),
                                       TextSpan(
                                         text: " Has Just Accepted your request, You're Now Friends!",
                                         style: TextStyle(
                                             fontSize: 14.sp,
-                                            color: Colors.black,
+                                            color: cubit.isDark ? Colors.white : Colors.black,
                                             overflow: TextOverflow.ellipsis),
                                       ),
                                     ],

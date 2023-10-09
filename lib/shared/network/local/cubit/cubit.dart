@@ -560,6 +560,8 @@ class AppCubit extends Cubit<AppStates> {
   List<PostModel> profilePosts = [];
 
   void getProfilePosts() {
+    emit(GetProfilePostsLoadingState());
+
     profilePosts = [];
     FirebaseFirestore.instance
     .collection('users')
@@ -710,9 +712,9 @@ class AppCubit extends Cubit<AppStates> {
 
   getComments(PostModel post) async
   {
-    comments = [];
-
     emit(GetCommentsLoadingState());
+
+    comments = [];
 
     FirebaseFirestore.instance
         .collection('posts')
@@ -730,7 +732,7 @@ class AppCubit extends Cubit<AppStates> {
         .catchError((error){
           errorMsg(error.toString());
           emit(GetCommentsErrorState());
-    });
+    }).whenComplete(() => emit(GetCommentsLoadingEndState()));
   }
 
   void changeCommentImageState()
@@ -995,6 +997,7 @@ class AppCubit extends Cubit<AppStates> {
                                         msg("Now, You Are Friends!");
                                         getConnections();
                                         getAllUsers();
+                                        getPosts();
                                         // Finally, the notification
                                         // Needs to be removed
                                         notifications.removeAt(index);

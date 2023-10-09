@@ -440,12 +440,26 @@ class Profile extends StatelessWidget {
                                   shrinkWrap: true,
                                 ),
                             fallback: (context) =>
-                                Column(
-                                  children: [
-                                    SizedBox(height: 10.h,),
-                                    CircularProgressIndicator(color: blue,),
-                                  ],
-                                ),
+                                ConditionalBuilder(
+                                    condition: state is GetProfilePostsLoadingState,
+                                    builder: (context) =>
+                                        Column(
+                                          children: [
+                                            SizedBox(height: 10.h,),
+                                            CircularProgressIndicator(color: blue,),
+                                          ],
+                                        ),
+                                    fallback: (context) =>
+                                        Center(
+                                          child: Text(
+                                            "No Posts Yey :/",
+                                            style: TextStyle(
+                                              fontSize: 14.sp,
+                                              color: cubit.isDark ? Colors.grey : Colors.grey.shade700,
+                                            ),
+                                          ),
+                                        ),
+                                )
                           ),
 
                           SizedBox(

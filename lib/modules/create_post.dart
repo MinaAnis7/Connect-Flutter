@@ -38,7 +38,7 @@ class CreatePost extends StatelessWidget {
               title: Text(
                 'Create Post',
                 style: TextStyle(
-                    color: Colors.black,
+                    color: cubit.isDark ? Colors.white : Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: 20.0.sp),
               ),
@@ -62,7 +62,7 @@ class CreatePost extends StatelessWidget {
                 )
               ],
             ),
-            backgroundColor: Colors.white,
+            backgroundColor: cubit.isDark ? DarkBackground : Colors.white,
             body: Padding(
               padding: EdgeInsets.symmetric(horizontal: 15.w),
               child: Container(
@@ -106,6 +106,7 @@ class CreatePost extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.bold,
+                                color: cubit.isDark ? Colors.white : Colors.black,
                               ),
                             ),
                           ],
@@ -130,6 +131,9 @@ class CreatePost extends StatelessWidget {
                               maxLines: null,
                               decoration: InputDecoration(
                                 hintText: 'Share Your Thoughts...',
+                                hintStyle: TextStyle(
+                                  color: cubit.isDark ? Colors.grey  : Colors.grey.shade700,
+                                ),
                                 border: InputBorder.none,
                               ),
                             ),

@@ -364,17 +364,23 @@ class NewsFeed extends StatelessWidget {
                             physics: NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                           ),
-                          fallback: (context) => Column(
-                            children: [
-                              SizedBox(
-                                height: 10.h,
-                              ),
-                              Center(
+                          fallback: (context) => ConditionalBuilder(
+                              condition: state is GetPostsLoadingState,
+                              builder: (context) => Center(
                                 child: CircularProgressIndicator(
                                   color: blue,
+                                  strokeWidth: 3.sp,
                                 ),
                               ),
-                            ],
+                              fallback: (context) => Center(
+                                child: Text(
+                                  "No Posts Yey :/",
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    color: cubit.isDark ? Colors.grey : Colors.grey.shade700,
+                                  ),
+                                ),
+                              ),
                           ),
                         ),
 
