@@ -184,6 +184,7 @@ class AppCubit extends Cubit<AppStates> {
     emit(ChangeImage());
   }
 
+  // Updates User Profile Picture
   void updateProfile() {
     emit(StoreImageLoadingState());
     FirebaseStorage.instance
@@ -242,6 +243,7 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
+  // Updates User Information
   void updateUserProfile({
     required String name,
     required String phone,
@@ -249,75 +251,33 @@ class AppCubit extends Cubit<AppStates> {
   }) {
     emit(UpdateUserProfileLoadingState());
 
-    FirebaseStorage.instance
-        .ref()
-        .child('users/${Uri.file(image!.path).pathSegments.last}')
-        .putFile(image!)
+    userModel!.name = name;
+    userModel!.phone = phone;
+    userModel!.bio = bio;
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userModel!.id)
+        .update(userModel!.toMap())
         .then((value) {
-      value.ref.getDownloadURL().then((value) {
-        userModel!.image = value;
+      Fluttertoast.showToast(
+        msg: 'Updated Successfully',
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        timeInSecForIosWeb: 3,
+      );
+      image = null;
+      cover = null;
 
-        FirebaseStorage.instance
-            .ref()
-            .child('users/${Uri.file(cover!.path).pathSegments.last}')
-            .putFile(cover!)
-            .then((value) {
-          value.ref.getDownloadURL().then((value) {
-            userModel!.cover = value;
-
-            userModel!.name = name;
-            userModel!.phone = phone;
-            userModel!.bio = bio;
-
-            FirebaseFirestore.instance
-                .collection('users')
-                .doc(userModel!.id)
-                .update(userModel!.toMap())
-                .then((value) {
-              Fluttertoast.showToast(
-                msg: 'Updated Successfully',
-                backgroundColor: Colors.green,
-                textColor: Colors.white,
-                timeInSecForIosWeb: 3,
-              );
-              image = null;
-              cover = null;
-
-              emit(UpdateUserProfileSuccessState());
-            }).catchError((error) {
-              if (kDebugMode) print(error.toString());
-              Fluttertoast.showToast(
-                msg: error.toString(),
-                backgroundColor: Colors.red,
-                textColor: Colors.white,
-                timeInSecForIosWeb: 3,
-              );
-              emit(UpdateUserProfileErrorState());
-            });
-          });
-        }).catchError((error) {
-          if (kDebugMode) print(error.toString());
-
-          Fluttertoast.showToast(
-            msg: error.toString(),
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            timeInSecForIosWeb: 3,
-          );
-
-          emit(UpdateUserProfileErrorState());
-        });
-      });
+      emit(UpdateUserProfileSuccessState());
     }).catchError((error) {
       if (kDebugMode) print(error.toString());
-
       Fluttertoast.showToast(
         msg: error.toString(),
         backgroundColor: Colors.red,
         textColor: Colors.white,
         timeInSecForIosWeb: 3,
       );
-
       emit(UpdateUserProfileErrorState());
     });
   }
