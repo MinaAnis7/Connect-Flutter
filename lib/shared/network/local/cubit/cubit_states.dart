@@ -103,3 +103,5 @@ class GetConnectionsErrorState extends AppStates {}
 class RejectNotificationState extends AppStates {}
 
 class ChangeThemeMode extends AppStates {}
+
+class OnChangeSearch extends AppStates {}

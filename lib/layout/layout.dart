@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:social_app/modules/notification_screen.dart';
+import 'package:social_app/modules/search.dart';
 import 'package:social_app/modules/settings.dart';
 import 'package:social_app/shared/components/components.dart';
 import 'package:social_app/shared/network/local/cubit/cubit.dart';
@@ -74,7 +75,11 @@ class Layout extends StatelessWidget {
                     ),
                   if (cubit.currentIndex != 3)
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(context,
+                          PageTransition(child: SearchScreen(), type: PageTransitionType.rightToLeft)
+                        );
+                      },
                       padding: EdgeInsets.zero,
                       icon: Icon(MyIcons.search, size: 20.sp,),
                     ),

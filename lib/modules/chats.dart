@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:social_app/models/user_model.dart';
 import 'package:social_app/modules/chat_room.dart';
 import 'package:social_app/shared/components/components.dart';
+import 'package:social_app/shared/network/local/cache/cache_helper.dart';
 import 'package:social_app/shared/network/local/cubit/cubit.dart';
 import 'package:social_app/shared/network/local/cubit/cubit_states.dart';
 import 'package:social_app/shared/style/colors.dart';
@@ -48,8 +50,12 @@ class Chats extends StatelessWidget {
                           ),
                           child: TextFormField(
                             maxLines: 1,
+                            onChanged: (value) {
+                              cubit.changeNameChat(value);
+                            },
                             style: TextStyle(
                               fontSize: 14.sp,
+                              color: cubit.isDark ? Colors.white : Colors.black,
                             ),
                             decoration: InputDecoration(
                               // This is giving me the responsive property,
@@ -80,12 +86,58 @@ class Chats extends StatelessWidget {
                             color: cubit.isDark ? DarkSurface : Colors.white,
                             borderRadius: BorderRadius.circular(13.sp),
                           ),
-                          child: ListView.separated(
-                            physics: NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) => chatItemBuilder(cubit.myConnections[index], context, cubit),
-                            separatorBuilder:(context, index) => separator(context),
-                            itemCount: cubit.myConnections.length,
-                            shrinkWrap: true,
+                          child: StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance.collection('users')
+                              .doc(CacheHelper.getData('userId'))
+                              .collection('connections')
+                              .snapshots(),
+
+                            builder: (context, snapshot) {
+                              return (snapshot.connectionState == ConnectionState.waiting)
+                              ? Center(
+                                child: CircularProgressIndicator(
+                                  color: blue, strokeWidth: 3.sp,),
+                              ) :
+                              ListView.separated(
+                                physics: NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  Map<String, dynamic> doc = snapshot.data!.docs[index].data()
+                                  as Map<String, dynamic>;
+
+                                  return FutureBuilder(
+                                    future: doc['user'].get(),
+                                    builder: (context, snapshot) {
+                                      if(snapshot.hasData)
+                                        {
+                                          DocumentSnapshot ss = snapshot.data as DocumentSnapshot ;
+
+                                          UserModel user = UserModel.fromJson(ss.data() as Map<String, dynamic>);
+
+                                          if(cubit.nameChat.isEmpty)
+                                            return chatItemBuilder(user, context, cubit);
+                                          if(user.name.toLowerCase().startsWith(cubit.nameChat.toLowerCase()))
+                                            return chatItemBuilder(user, context, cubit);
+
+                                          return Container();
+                                        }
+                                      else
+                                        {
+                                          return Center(
+                                            child: CircularProgressIndicator(
+                                              color: blue,
+                                              strokeWidth: 3.sp,
+                                            ),
+                                          );
+                                        }
+                                    },
+                                  );
+
+                                },
+                                separatorBuilder:(context, index) => separator(context),
+                                itemCount: snapshot.data!.docs.length,
+                                shrinkWrap: true,
+                              );
+                            }
                           ),
                         ),
                       ),

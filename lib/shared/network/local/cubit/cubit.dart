@@ -1046,5 +1046,25 @@ class AppCubit extends Cubit<AppStates> {
 
   //#endregion
 
+  //#region Search
+
+  String name = "";
+
+  void changeName(String value)
+  {
+    name = value;
+    emit(OnChangeSearch());
+  }
+
+String nameChat = "";
+
+  void changeNameChat(String value)
+  {
+    nameChat = value;
+    emit(OnChangeSearch());
+  }
+
+
+  //#endregion
 
 }
