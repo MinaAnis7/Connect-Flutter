@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:social_app/models/user_model.dart';
+import 'package:social_app/modules/user_profile.dart';
+import 'package:social_app/shared/components/components.dart';
+import 'package:social_app/shared/network/local/cache/cache_helper.dart';
 import 'package:social_app/shared/network/local/cubit/cubit.dart';
 import 'package:social_app/shared/network/local/cubit/cubit_states.dart';
 
@@ -62,9 +65,9 @@ class SearchScreen extends StatelessWidget {
                           as Map<String, dynamic>);
 
                       if (cubit.name.isEmpty)
-                        return searchItemBuilder(cubit, user);
+                        return searchItemBuilder(cubit, user, context);
                       if (user.name.toLowerCase().startsWith(cubit.name.toLowerCase()))
-                        return searchItemBuilder(cubit, user);
+                        return searchItemBuilder(cubit, user, context);
 
                       return Container();
                     },
@@ -81,48 +84,62 @@ class SearchScreen extends StatelessWidget {
   }
 
 
-  Widget searchItemBuilder(AppCubit cubit, UserModel user)
+  Widget searchItemBuilder(AppCubit cubit, UserModel user, BuildContext context)
   {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Image
-        CircleAvatar(
-          backgroundImage: NetworkImage(user.image),
-          radius: 22.sp,
-        ),
+    return InkWell(
+      onTap: () {
+        if(user.id == CacheHelper.getData('userId'))
+          {
+            Navigator.pop(context);
+            cubit.changeIndex(3);
+          }
+        else
+          {
+            navigateTo(context: context, widget: UserProfile(user));
+            cubit.getUserPosts(user);
+          }
+      },
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image
+          CircleAvatar(
+            backgroundImage: NetworkImage(user.image),
+            radius: 22.sp,
+          ),
 
-        SizedBox(width: 10.w,),
+          SizedBox(width: 10.w,),
 
-        // Name & Number of connections
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Name
-            Text(
-              user.name,
-              style: TextStyle(
-                color: cubit.isDark ? Colors.white : Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 14.sp,
+          // Name & Number of connections
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Name
+              Text(
+                user.name,
+                style: TextStyle(
+                  color: cubit.isDark ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14.sp,
 
+                ),
               ),
-            ),
 
-            // Number of connections
-            Text(
-              "${user.numOfConnects} Connections",
-              style: TextStyle(
-                color: cubit.isDark ? Colors.grey : Colors.grey.shade700,
-                fontSize: 14.sp,
+              // Number of connections
+              Text(
+                "${user.numOfConnects} Connections",
+                style: TextStyle(
+                  color: cubit.isDark ? Colors.grey : Colors.grey.shade700,
+                  fontSize: 14.sp,
 
+                ),
               ),
-            ),
 
 
-          ],
-        )
-      ],
+            ],
+          )
+        ],
+      ),
     );
   }
 }

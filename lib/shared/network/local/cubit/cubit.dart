@@ -543,6 +543,34 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
+  List<PostModel> userPosts = [];
+
+  void getUserPosts(UserModel user) {
+    emit(GetProfilePostsLoadingState());
+
+    userPosts = [];
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.id)
+        .collection('posts')
+        .get()
+        .then((value) {
+      value.docs.forEach((doc) {
+        DocumentReference docRef = doc.data()['post'];
+        docRef.get().then((value) {
+          userPosts.add(PostModel.fromJson(value.data() as Map<String, dynamic>));
+          emit(GetProfilePostsState());
+        });
+      });
+    })
+        .catchError((error){
+      errorMsg(error.toString());
+      emit(GetPostsErrorState());
+    }).whenComplete(() {
+      emit(GetProfilePostsState());
+    });
+  }
+
 //#endregion
 
   //#region Delete a Post
@@ -833,6 +861,16 @@ class AppCubit extends Cubit<AppStates> {
   //#endregion
 
   //#region Connections & Notifications
+  // Check the existence of a connection
+  Future<bool> isConnectionExists(UserModel user) async
+  {
+    final collection = FirebaseFirestore.instance.collection('users')
+    .doc(CacheHelper.getData('userId')).collection('connections');
+    final documentSnapshot = await collection.doc(user.id).get();
+
+    return documentSnapshot.exists;
+  }
+
   void sendConnectionRequest(UserModel userToConnect)
   {
     NotificationModel notification = NotificationModel(
