@@ -231,6 +231,8 @@ class CreatePost extends StatelessWidget {
                               onTap: () {
                                 showModalBottomSheet(
                                   context: context,
+                                  backgroundColor: cubit.isDark ? DarkSurface
+                                  : Colors.white,
                                   builder: (context) {
                                     return Padding(
                                       padding: EdgeInsets.symmetric(
@@ -242,8 +244,18 @@ class CreatePost extends StatelessWidget {
                                               Expanded(
                                                 child: TextFormField(
                                                   controller: tagsController,
+                                                  style: TextStyle(
+                                                    color: cubit.isDark ?
+                                                        Colors.white :
+                                                        Colors.black,
+                                                  ),
                                                   decoration: InputDecoration(
                                                     hintText: 'Add a Tag',
+                                                    hintStyle: TextStyle(
+                                                      color: cubit.isDark ?
+                                                          Colors.grey:
+                                                          Colors.grey.shade700
+                                                    ),
                                                     border: InputBorder.none,
                                                   ),
                                                 ),

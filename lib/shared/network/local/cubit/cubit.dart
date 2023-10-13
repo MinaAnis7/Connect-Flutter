@@ -666,6 +666,33 @@ class AppCubit extends Cubit<AppStates> {
 
   //#endregion
 
+  //#region Get Loves
+  List<UserModel> postLoves = [];
+
+  void getLoves(PostModel post)
+  {
+    postLoves = [];
+
+    FirebaseFirestore.instance
+        .collection('posts')
+        .doc(post.postId)
+        .collection('loves')
+        .get()
+        .then((value) {
+          value.docs.forEach((doc) {
+            doc.data()['user'].get().then((value) {
+              postLoves.add(UserModel.fromJson(value.data()));
+              emit(GetLovesState());
+            });
+          });
+    })
+        .catchError((error) {
+          emit(GetLovesErrorState());
+          errorMsg(error);
+    });
+  }
+  //#endregion
+
   //#region Post&Get Comments
 
   void comment(PostModel post, String commentText)

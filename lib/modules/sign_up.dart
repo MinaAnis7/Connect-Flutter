@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:social_app/modules/login_screen.dart';
 import 'package:social_app/shared/network/local/cubit/cubit.dart';
 import 'package:social_app/shared/network/local/cubit/cubit_states.dart';
-
 import '../layout/layout.dart';
 import '../shared/components/components.dart';
 import '../shared/style/colors.dart';

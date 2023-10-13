@@ -7,12 +7,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:readmore/readmore.dart';
 import 'package:social_app/models/post_model.dart';
 import 'package:social_app/modules/comments_sheet.dart';
 import 'package:social_app/modules/create_post.dart';
+import 'package:social_app/modules/post_loves.dart';
 import 'package:social_app/shared/components/components.dart';
 import 'package:social_app/shared/network/local/cubit/cubit_states.dart';
 import 'package:social_app/shared/style/colors.dart';
@@ -551,6 +551,31 @@ class NewsFeed extends StatelessWidget {
                   InkWell(
                     onTap: () {
                       // Getting Who Loved This
+                      cubit.getLoves(post);
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return SimpleDialog(
+                              title: Text(
+                                "Who loved this post",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.sp,
+                                  color: cubit.isDark ? Colors.white : Colors.black,
+                                ),
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14.sp),
+                              ),
+                              elevation: 5,
+                              backgroundColor: cubit.isDark ?
+                              DarkSurface : Colors.white,
+                              children: [
+                                PostLoves(post),
+                              ],
+                            );
+                          },
+                      );
                     },
                     child: Row(
                       children: [
