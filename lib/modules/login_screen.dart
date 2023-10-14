@@ -177,7 +177,9 @@ class LoginScreen extends StatelessWidget {
                             ),
                             SizedBox(height: 20.0.sp),
                             defaultButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                cubit.signInWithGoogle();
+                              },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [

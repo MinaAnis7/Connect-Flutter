@@ -232,7 +232,9 @@ class SignUpScreen extends StatelessWidget {
                             ),
                             SizedBox(height: 20.0.sp),
                             defaultButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                cubit.signUpWithGoogle();
+                              },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -256,6 +258,7 @@ class SignUpScreen extends StatelessWidget {
                               ),
                               color: cubit.isDark ? DarkSurface : superBabyBlue,
                             ),
+                            SizedBox(height: 10.h,),
                           ],
                         ),
                       ),

@@ -1,0 +1,4 @@
+#Sat Oct 14 14:44:23 EET 2023
+base.0=D\:\\Cources\\Flutter\\projects\\social_app\\android\\build\\app\\intermediates\\dex\\release\\minifyReleaseWithR8\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex

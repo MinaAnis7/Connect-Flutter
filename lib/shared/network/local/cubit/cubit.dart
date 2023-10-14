@@ -23,14 +23,13 @@ import 'package:social_app/shared/components/components.dart';
 import 'package:social_app/shared/network/local/cache/cache_helper.dart';
 import 'package:social_app/shared/network/local/cubit/cubit_states.dart';
 import 'package:social_app/shared/style/icons/my_icons_icons.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../../../../models/post_model.dart';
 
 class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(InitialState());
 
   static AppCubit get(context) => BlocProvider.of(context);
-
-  
 
   //#region Obscure Text
   bool isObscure = true;
@@ -65,13 +64,11 @@ class AppCubit extends Cubit<AppStates> {
         cover: cover,
         connects: conn,
       );
-      CacheHelper.putString('userId', value.user!.uid)
-          .then((value) {
+      CacheHelper.putString('userId', value.user!.uid).then((value) {
         emit(UserRegisterSuccessState());
         getUserData();
-      })
-          .catchError((error) {
-            errorMsg(error.toString());
+      }).catchError((error) {
+        errorMsg(error.toString());
       });
 
       if (kDebugMode) print(value.user!.email);
@@ -93,11 +90,9 @@ class AppCubit extends Cubit<AppStates> {
         .then((value) async {
       emit(UserLoginSuccessState());
 
-      CacheHelper.putString('userId', value.user!.uid)
-          .then((value) {
-            getUserData();
-      })
-          .catchError((error) {
+      CacheHelper.putString('userId', value.user!.uid).then((value) {
+        getUserData();
+      }).catchError((error) {
         kDebugMode ? print(error.toString()) : null;
       });
       if (kDebugMode) print(value.user!.email);
@@ -137,6 +132,73 @@ class AppCubit extends Cubit<AppStates> {
 
   //#endregion
 
+  //# region Login With Google
+  void signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    if (googleUser == null) return;
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    final UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+
+    emit(UserLoginSuccessState());
+
+    await CacheHelper.putString('userId', userCredential.user!.uid);
+
+    getUserData();
+
+  }
+
+  void signUpWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    if (googleUser == null) return;
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+    await googleUser.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    final UserCredential userCredential =
+    await FirebaseAuth.instance.signInWithCredential(credential);
+
+    createUser(
+        id: userCredential.user!.uid,
+        name: userCredential.user!.displayName ?? "",
+        email: userCredential.user!.email ?? "",
+        phone: userCredential.user!.phoneNumber ?? "",
+        img: userCredential.user!.photoURL ?? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUzlfySeiXVWcK9aWigruMaOILZBN2YooUMQ&usqp=CAU',
+        bio: 'Hey there! I\'m using Connect.',
+        cover: 'https://wallpaperaccess.com/full/148418.jpg',
+        connects: 0);
+
+    await CacheHelper.putString('userId', userCredential.user!.uid);
+
+    getUserData();
+
+  }
+
+  //#endregion
+
   //#region Get User Data
   UserModel? userModel;
 
@@ -157,7 +219,6 @@ class AppCubit extends Cubit<AppStates> {
       if (kDebugMode) print(error);
       emit(GetUserDataErrorState());
     });
-
   }
 
   Future<void> getUserDataRefresh() async {
@@ -312,7 +373,6 @@ class AppCubit extends Cubit<AppStates> {
       postModel?.tags = createdTags;
     }
 
-
     if (postImage != null) {
       FirebaseStorage.instance
           .ref()
@@ -325,10 +385,12 @@ class AppCubit extends Cubit<AppStates> {
               .collection('posts')
               .add(postModel!.toMap())
               .then((value) {
-                FirebaseFirestore.instance.collection('users').doc(userModel?.id)
+            FirebaseFirestore.instance
+                .collection('users')
+                .doc(userModel?.id)
                 .collection('posts')
                 .doc(value.id)
-                .set({'post' : value});
+                .set({'post': value});
             postImage = null;
             postModel?.postId = value.id;
 
@@ -358,39 +420,39 @@ class AppCubit extends Cubit<AppStates> {
             msg: error.toString(), backgroundColor: Colors.red);
         emit(CreatePostErrorState());
       });
-    }
-    else
-      {
+    } else {
+      FirebaseFirestore.instance
+          .collection('posts')
+          .add(postModel!.toMap())
+          .then((value) {
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(userModel?.id)
+            .collection('posts')
+            .doc(value.id)
+            .set({'post': value});
+        postImage = null;
+        postModel?.postId = value.id;
         FirebaseFirestore.instance
             .collection('posts')
-            .add(postModel!.toMap())
+            .doc(value.id)
+            .update(postModel!.toMap())
             .then((value) {
-          FirebaseFirestore.instance.collection('users').doc(userModel?.id)
-              .collection('posts')
-              .doc(value.id)
-              .set({'post' : value});
-          postImage = null;
-          postModel?.postId = value.id;
-          FirebaseFirestore.instance
-              .collection('posts')
-              .doc(value.id)
-              .update(postModel!.toMap()).then((value) {
-            getPosts();
-            getProfilePosts();
-            Fluttertoast.showToast(
-              msg: 'Post Created.',
-              backgroundColor: Colors.green,
-              fontSize: 14.sp,
-            );
-            Navigator.pop(context);
-            emit(CreatePostSuccessState());
-          });
-
-        }).catchError((error) {
-          errorMsg(error);
-          emit(CreatePostErrorState());
+          getPosts();
+          getProfilePosts();
+          Fluttertoast.showToast(
+            msg: 'Post Created.',
+            backgroundColor: Colors.green,
+            fontSize: 14.sp,
+          );
+          Navigator.pop(context);
+          emit(CreatePostSuccessState());
         });
-      }
+      }).catchError((error) {
+        errorMsg(error);
+        emit(CreatePostErrorState());
+      });
+    }
   }
 
   String dateFormat(DateTime date) {
@@ -438,10 +500,10 @@ class AppCubit extends Cubit<AppStates> {
   //#region Bottom Nav Bar Section
   List<BottomNavigationBarItem> navItems = [
     BottomNavigationBarItem(
-        icon: FaIcon(
-          FontAwesomeIcons.newspaper,
-        ),
-        label: 'News Feed',
+      icon: FaIcon(
+        FontAwesomeIcons.newspaper,
+      ),
+      label: 'News Feed',
     ),
     BottomNavigationBarItem(
         icon: Icon(
@@ -489,21 +551,24 @@ class AppCubit extends Cubit<AppStates> {
     emit(GetPostsLoadingState());
     posts = [];
     List<String> connectionIds = [];
-    
-    FirebaseFirestore.instance.collection('users')
-    .doc(CacheHelper.getData('userId'))
-    .collection('connections')
-    .get()
-    .then((value) {
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(CacheHelper.getData('userId'))
+        .collection('connections')
+        .get()
+        .then((value) {
       value.docs.forEach((doc) {
         connectionIds.add(doc.id);
       });
 
-      FirebaseFirestore.instance.collection('posts')
+      FirebaseFirestore.instance
+          .collection('posts')
           .orderBy('dateTime', descending: true)
-          .get().then((value) {
+          .get()
+          .then((value) {
         value.docs.forEach((doc) {
-          if(connectionIds.contains(doc.data()['uid']))
+          if (connectionIds.contains(doc.data()['uid']))
             posts.add(PostModel.fromJson(doc.data()));
         });
         emit(GetPostsSuccessState());
@@ -511,10 +576,7 @@ class AppCubit extends Cubit<AppStates> {
         errorMsg(error.toString());
         emit(GetUserDataErrorState());
       });
-
     });
-
-    
   }
 
   List<PostModel> profilePosts = [];
@@ -524,20 +586,20 @@ class AppCubit extends Cubit<AppStates> {
 
     profilePosts = [];
     FirebaseFirestore.instance
-    .collection('users')
-    .doc(CacheHelper.getData('userId'))
-    .collection('posts')
-    .get()
-    .then((value) {
+        .collection('users')
+        .doc(CacheHelper.getData('userId'))
+        .collection('posts')
+        .get()
+        .then((value) {
       value.docs.forEach((doc) {
-       DocumentReference docRef = doc.data()['post'];
-       docRef.get().then((value) {
-         profilePosts.add(PostModel.fromJson(value.data() as Map<String, dynamic>));
-         emit(GetProfilePostsState());
-       });
+        DocumentReference docRef = doc.data()['post'];
+        docRef.get().then((value) {
+          profilePosts
+              .add(PostModel.fromJson(value.data() as Map<String, dynamic>));
+          emit(GetProfilePostsState());
+        });
       });
-    })
-    .catchError((error){
+    }).catchError((error) {
       errorMsg(error.toString());
       emit(GetPostsErrorState());
     });
@@ -558,12 +620,12 @@ class AppCubit extends Cubit<AppStates> {
       value.docs.forEach((doc) {
         DocumentReference docRef = doc.data()['post'];
         docRef.get().then((value) {
-          userPosts.add(PostModel.fromJson(value.data() as Map<String, dynamic>));
+          userPosts
+              .add(PostModel.fromJson(value.data() as Map<String, dynamic>));
           emit(GetProfilePostsState());
         });
       });
-    })
-        .catchError((error){
+    }).catchError((error) {
       errorMsg(error.toString());
       emit(GetPostsErrorState());
     }).whenComplete(() {
@@ -575,12 +637,13 @@ class AppCubit extends Cubit<AppStates> {
 
   //#region Delete a Post
 
-  void deletePost(PostModel post)
-  {
-    FirebaseFirestore.instance.collection('posts')
+  void deletePost(PostModel post) {
+    FirebaseFirestore.instance
+        .collection('posts')
         .doc(post.postId)
-        .delete().then((value) {
-          getProfilePosts();
+        .delete()
+        .then((value) {
+      getProfilePosts();
     });
   }
 
@@ -612,25 +675,24 @@ class AppCubit extends Cubit<AppStates> {
           .doc(userModel!.id)
           .collection('loves')
           .doc(post.postId)
-          .set({'post': postDocRef, 'love' : true});
+          .set({'post': postDocRef, 'love': true});
     }).catchError((error) {
       errorMsg(error.toString());
       emit(LovePostErrorState());
     });
   }
 
-  Future<bool> isLoved(PostModel post) async
-  {
-    return await FirebaseFirestore.instance.collection('users').doc(userModel?.id)
+  Future<bool> isLoved(PostModel post) async {
+    return await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userModel?.id)
         .collection('loves')
         .doc(post.postId)
         .get()
         .then((value) {
-          return value.data()?['love'] ?? false;
+      return value.data()?['love'] ?? false;
     });
-
   }
-
 
 //#endregion
 
@@ -642,35 +704,36 @@ class AppCubit extends Cubit<AppStates> {
     FirebaseFirestore.instance
         .collection('posts')
         .doc(post.postId)
-        .update(post.toMap()).then((value) {
-          FirebaseFirestore.instance
-              .collection('users')
-              .doc(userModel?.id)
-              .collection('loves')
-              .doc(post.postId).delete().then((value) {
-                emit(LoveWithdrawalSuccessState());
+        .update(post.toMap())
+        .then((value) {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(userModel?.id)
+          .collection('loves')
+          .doc(post.postId)
+          .delete()
+          .then((value) {
+        emit(LoveWithdrawalSuccessState());
 
-                FirebaseFirestore.instance
-                .collection('posts')
-                .doc(post.postId)
-                .collection('loves')
-                .doc(userModel?.id).delete();
-          });
-    }).catchError((error){
+        FirebaseFirestore.instance
+            .collection('posts')
+            .doc(post.postId)
+            .collection('loves')
+            .doc(userModel?.id)
+            .delete();
+      });
+    }).catchError((error) {
       errorMsg(error.toString());
       emit(LoveWithdrawalErrorState());
     });
-
-
-  }    
+  }
 
   //#endregion
 
   //#region Get Loves
   List<UserModel> postLoves = [];
 
-  void getLoves(PostModel post)
-  {
+  void getLoves(PostModel post) {
     postLoves = [];
 
     FirebaseFirestore.instance
@@ -679,45 +742,45 @@ class AppCubit extends Cubit<AppStates> {
         .collection('loves')
         .get()
         .then((value) {
-          value.docs.forEach((doc) {
-            doc.data()['user'].get().then((value) {
-              postLoves.add(UserModel.fromJson(value.data()));
-              emit(GetLovesState());
-            });
-          });
-    })
-        .catchError((error) {
-          emit(GetLovesErrorState());
-          errorMsg(error);
+      value.docs.forEach((doc) {
+        doc.data()['user'].get().then((value) {
+          postLoves.add(UserModel.fromJson(value.data()));
+          emit(GetLovesState());
+        });
+      });
+    }).catchError((error) {
+      emit(GetLovesErrorState());
+      errorMsg(error);
     });
   }
+
   //#endregion
 
   //#region Post&Get Comments
 
-  void comment(PostModel post, String commentText)
-  {
+  void comment(PostModel post, String commentText) {
     CommentModel comment = CommentModel(comment: commentText, user: userModel!);
     post.numOfComments++;
     FirebaseFirestore.instance
-    .collection('posts')
-    .doc(post.postId)
-    .update(post.toMap()).then((value) { emit(UpdateNumOfCommentsSuccessState()); })
-    .catchError((error){
+        .collection('posts')
+        .doc(post.postId)
+        .update(post.toMap())
+        .then((value) {
+      emit(UpdateNumOfCommentsSuccessState());
+    }).catchError((error) {
       errorMsg(error.toString());
       emit(UpdateNumOfCommentsErrorState());
     });
 
     FirebaseFirestore.instance
-    .collection('posts')
-    .doc(post.postId)
-    .collection('comments')
-    .add(comment.toMap())
-    .then((value) {
+        .collection('posts')
+        .doc(post.postId)
+        .collection('comments')
+        .add(comment.toMap())
+        .then((value) {
       getComments(post);
       emit(PostCommentSuccessState());
-    })
-    .catchError((error){
+    }).catchError((error) {
       errorMsg(error.toString());
       emit(PostCommentErrorState());
     });
@@ -725,8 +788,7 @@ class AppCubit extends Cubit<AppStates> {
 
   List<CommentModel> comments = [];
 
-  getComments(PostModel post) async
-  {
+  getComments(PostModel post) async {
     emit(GetCommentsLoadingState());
 
     comments = [];
@@ -737,21 +799,20 @@ class AppCubit extends Cubit<AppStates> {
         .collection('comments')
         .get()
         .then((value) {
-          value.docs.forEach((doc) async {
-            DocumentReference docRef = doc['user'];
-            var value = await docRef.get();
-            comments.add(CommentModel.fromJson(doc.data(), UserModel.fromJson(value.data() as Map<String, dynamic>)));
-            emit(GetCommentsSuccessState());
-          });
-    })
-        .catchError((error){
-          errorMsg(error.toString());
-          emit(GetCommentsErrorState());
+      value.docs.forEach((doc) async {
+        DocumentReference docRef = doc['user'];
+        var value = await docRef.get();
+        comments.add(CommentModel.fromJson(doc.data(),
+            UserModel.fromJson(value.data() as Map<String, dynamic>)));
+        emit(GetCommentsSuccessState());
+      });
+    }).catchError((error) {
+      errorMsg(error.toString());
+      emit(GetCommentsErrorState());
     }).whenComplete(() => emit(GetCommentsLoadingEndState()));
   }
 
-  void changeCommentImageState()
-  {
+  void changeCommentImageState() {
     emit(ChangeCommentImageState());
   }
 
@@ -762,15 +823,15 @@ class AppCubit extends Cubit<AppStates> {
   List<UserModel> allUsers = [];
 
   //This function get the not connected users.
-  void getAllUsers()
-  {
+  void getAllUsers() {
     emit(GetAllUsersLoadingState());
 
     allUsers = [];
 
     List<String> connectionIds = [];
 
-    FirebaseFirestore.instance.collection('users')
+    FirebaseFirestore.instance
+        .collection('users')
         .doc(CacheHelper.getData('userId'))
         .collection('connections')
         .get()
@@ -779,25 +840,18 @@ class AppCubit extends Cubit<AppStates> {
         connectionIds.add(doc.id);
       });
 
-      FirebaseFirestore.instance
-          .collection('users')
-          .get()
-          .then((value) {
+      FirebaseFirestore.instance.collection('users').get().then((value) {
         value.docs.forEach((doc) {
-          if(! connectionIds.contains(doc.data()['id']) && doc.data()['id'] != CacheHelper.getData('userId'))
+          if (!connectionIds.contains(doc.data()['id']) &&
+              doc.data()['id'] != CacheHelper.getData('userId'))
             allUsers.add(UserModel.fromJson(doc.data()));
         });
         emit(GetAllUsersSuccessState());
-      })
-          .catchError((error){
+      }).catchError((error) {
         errorMsg(error.toString());
         emit(GetAllUsersErrorState());
       });
-
     });
-
-
-
   }
 
   //#endregion
@@ -805,8 +859,8 @@ class AppCubit extends Cubit<AppStates> {
   //#region Emojis Section
 
   bool emojiIsNotVisible = true;
-  void changeEmojiVisibility()
-  {
+
+  void changeEmojiVisibility() {
     emojiIsNotVisible = !emojiIsNotVisible;
     emit(ChangeEmojiVisibility());
   }
@@ -815,48 +869,44 @@ class AppCubit extends Cubit<AppStates> {
 
   //#region Messages Section
 
-  void sendMessage(String message, String receiverId)
-  {
+  void sendMessage(String message, String receiverId) {
     String userId = CacheHelper.getData('userId');
-    DocumentReference sender = FirebaseFirestore.instance.collection('users').doc(userId);
-    DocumentReference receiver = FirebaseFirestore.instance.collection('users').doc(receiverId);
+    DocumentReference sender =
+        FirebaseFirestore.instance.collection('users').doc(userId);
+    DocumentReference receiver =
+        FirebaseFirestore.instance.collection('users').doc(receiverId);
     final now = FieldValue.serverTimestamp();
 
-    sender.collection('connections')
-    .doc(receiverId)
-    .collection('messages')
-    .add({
-      'message' : message,
-      'senderId' : userId,
+    sender
+        .collection('connections')
+        .doc(receiverId)
+        .collection('messages')
+        .add({
+      'message': message,
+      'senderId': userId,
       'DateTime': now,
     }).then((value) {
       emit(SendMessageSuccessState());
-    })
-    .catchError((error){
+    }).catchError((error) {
       errorMsg(error.toString());
       emit(SendMessageErrorState());
     });
 
-    receiver.collection('connections')
-    .doc(userId)
-    .collection('messages')
-    .add({
-      'message' : message,
-      'senderId' : userId,
+    receiver.collection('connections').doc(userId).collection('messages').add({
+      'message': message,
+      'senderId': userId,
       'DateTime': now,
-    })
-    .then((value) {
+    }).then((value) {
       emit(SendMessageSuccessState());
-    })
-    .catchError((error){
+    }).catchError((error) {
       errorMsg(error.toString());
       emit(SendMessageErrorState());
     });
   }
 
   List<Message> messages = [];
-  void getMessages(String receiverId)
-  {
+
+  void getMessages(String receiverId) {
     FirebaseFirestore.instance
         .collection('users')
         .doc(CacheHelper.getData('userId'))
@@ -866,13 +916,13 @@ class AppCubit extends Cubit<AppStates> {
         .orderBy('DateTime')
         .snapshots()
         .listen((event) {
-          messages = [];
+      messages = [];
 
-          event.docs.forEach((doc) {
-            messages.add(Message.fromJson(doc.data()));
-          });
+      event.docs.forEach((doc) {
+        messages.add(Message.fromJson(doc.data()));
+      });
 
-          emit(GetMessagesState());
+      emit(GetMessagesState());
     });
   }
 
@@ -881,6 +931,9 @@ class AppCubit extends Cubit<AppStates> {
   //# region Sign out
 
   void signOut() async {
+    GoogleSignIn googleSignIn = GoogleSignIn();
+    googleSignIn.disconnect();
+
     await FirebaseAuth.instance.signOut();
     CacheHelper.removeData('userId');
   }
@@ -889,211 +942,218 @@ class AppCubit extends Cubit<AppStates> {
 
   //#region Connections & Notifications
   // Check the existence of a connection
-  Future<bool> isConnectionExists(UserModel user) async
-  {
-    final collection = FirebaseFirestore.instance.collection('users')
-    .doc(CacheHelper.getData('userId')).collection('connections');
+  Future<bool> isConnectionExists(UserModel user) async {
+    final collection = FirebaseFirestore.instance
+        .collection('users')
+        .doc(CacheHelper.getData('userId'))
+        .collection('connections');
     final documentSnapshot = await collection.doc(user.id).get();
 
     return documentSnapshot.exists;
   }
 
-  void sendConnectionRequest(UserModel userToConnect)
-  {
+  void sendConnectionRequest(UserModel userToConnect) {
     NotificationModel notification = NotificationModel(
       type: 'connection_request',
       user: userModel!,
     );
-    
+
     Map<String, dynamic> data = notification.toMap();
-    
-    FirebaseFirestore.instance.collection('users')
+
+    FirebaseFirestore.instance
+        .collection('users')
         .doc(userToConnect.id)
         .collection('notifications')
-        .add(data).then((value) {
-          data.addAll({'id' : value.id});
-          FirebaseFirestore.instance.collection('users')
-              .doc(userToConnect.id)
-              .collection('notifications')
-              .doc(value.id)
-              .update(data);
+        .add(data)
+        .then((value) {
+      data.addAll({'id': value.id});
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(userToConnect.id)
+          .collection('notifications')
+          .doc(value.id)
+          .update(data);
     });
   }
 
   List<NotificationModel> notifications = [];
 
-  void getNotifications()
-  {
+  void getNotifications() {
     emit(GetNotificationsLoadingState());
 
-    FirebaseFirestore.instance.collection('users')
+    FirebaseFirestore.instance
+        .collection('users')
         .doc(userModel?.id)
         .collection('notifications')
         .snapshots()
         .listen((event) {
-          notifications = [];
-          event.docs.forEach((doc) {
-            doc.data()['user'].get().then((value) {
-              notifications.add(NotificationModel.fromJson(doc.data(), UserModel.fromJson(value.data())));
-              emit(GetNotificationsSuccessState());
-            });
-          });
-
+      notifications = [];
+      event.docs.forEach((doc) {
+        doc.data()['user'].get().then((value) {
+          notifications.add(NotificationModel.fromJson(
+              doc.data(), UserModel.fromJson(value.data())));
+          emit(GetNotificationsSuccessState());
+        });
+      });
     });
-
   }
 
-  void rejectConnection(NotificationModel notification, int index)
-  {
+  void rejectConnection(NotificationModel notification, int index) {
     notifications.removeAt(index);
     emit(RejectNotificationState());
 
-    FirebaseFirestore.instance.collection('users')
+    FirebaseFirestore.instance
+        .collection('users')
         .doc(userModel!.id)
         .collection('notifications')
-        .doc(notification.id).delete().then((value) {
-          emit(RejectNotificationState());
-          errorMsg("Connection Request Was Rejected");
+        .doc(notification.id)
+        .delete()
+        .then((value) {
+      emit(RejectNotificationState());
+      errorMsg("Connection Request Was Rejected");
     });
   }
 
-  void markAsRead(NotificationModel notification, int index)
-  {
+  void markAsRead(NotificationModel notification, int index) {
     notifications.removeAt(index);
-    FirebaseFirestore.instance.collection('users')
+    FirebaseFirestore.instance
+        .collection('users')
         .doc(CacheHelper.getData('userId'))
         .collection('notifications')
-        .doc(notification.id).delete().then((value) {
-          emit(RejectNotificationState());
+        .doc(notification.id)
+        .delete()
+        .then((value) {
+      emit(RejectNotificationState());
     });
-
   }
-  
-  void acceptConnection(NotificationModel notification, int index)
-  {
+
+  void acceptConnection(NotificationModel notification, int index) {
     emit(AcceptConnectionLoadingState());
 
     // First, add the user who sent the connection to me
-    FirebaseFirestore.instance.collection('users')
+    FirebaseFirestore.instance
+        .collection('users')
         .doc(userModel!.id)
         .collection('connections')
         .doc(notification.user?.id)
-        .set(
-        {'user' : FirebaseFirestore.instance.collection('users')
-            .doc(notification.user?.id)}, SetOptions(merge: true))
-        .then((value) {
-          // Second, add me to the user who sent the connection
-          FirebaseFirestore.instance.collection('users')
+        .set({
+      'user': FirebaseFirestore.instance
+          .collection('users')
+          .doc(notification.user?.id)
+    }, SetOptions(merge: true)).then((value) {
+      // Second, add me to the user who sent the connection
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(notification.user?.id)
+          .collection('connections')
+          .doc(userModel!.id)
+          .set({
+        'user':
+            FirebaseFirestore.instance.collection('users').doc(userModel!.id)
+      }, SetOptions(merge: true)).then((value) {
+        // Third, I need to send a notification to the user
+        // To notify him/her that I accepted the request.
+        NotificationModel acceptNotification = NotificationModel(
+          type: "connection_accept",
+          user: userModel!,
+        );
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(notification.user?.id)
+            .collection('notifications')
+            .add(acceptNotification.toMap())
+            .then((value) {
+          FirebaseFirestore.instance
+              .collection('users')
               .doc(notification.user?.id)
-              .collection('connections')
-              .doc(userModel!.id)
-              .set({'user' : FirebaseFirestore.instance
-              .collection('users').doc(userModel!.id)}, SetOptions(merge: true)).then((value) {
-                // Third, I need to send a notification to the user
-                // To notify him/her that I accepted the request.
-                NotificationModel acceptNotification = NotificationModel(
-                    type: "connection_accept",
-                    user: userModel!,
-                );
+              .collection('notifications')
+              .doc(value.id)
+              .update({'id': value.id}).then((value) {
+            // Now, Lets increment the number of connection
+            // for both of us
+            FirebaseFirestore.instance
+                .collection('users')
+                .doc(notification.user?.id)
+                .update({'numOfConnects': FieldValue.increment(1)}).then(
+                    (value) {
+              FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(userModel!.id)
+                  .update({'numOfConnects': FieldValue.increment(1)}).then(
+                      (value) {
+                emit(AcceptConnectionSuccessState());
+                msg("Now, You Are Friends!");
+                getConnections();
+                getAllUsers();
+                getPosts();
+                // Finally, the notification
+                // Needs to be removed
+                notifications.removeAt(index);
+                emit(AcceptConnectionSuccessState());
+
                 FirebaseFirestore.instance
                     .collection('users')
-                    .doc(notification.user?.id)
+                    .doc(userModel!.id)
                     .collection('notifications')
-                    .add(acceptNotification.toMap()).then((value) {
-                      FirebaseFirestore.instance
-                          .collection('users')
-                          .doc(notification.user?.id)
-                          .collection('notifications')
-                          .doc(value.id)
-                          .update({'id' : value.id}).then((value) {
-                            // Now, Lets increment the number of connection
-                            // for both of us
-                            FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(notification.user?.id)
-                                .update({'numOfConnects' : FieldValue.increment(1)})
-                                .then((value) {
-                                  FirebaseFirestore.instance
-                                      .collection('users')
-                                      .doc(userModel!.id)
-                                      .update({'numOfConnects' : FieldValue.increment(1)})
-                                      .then((value) {
-                                        emit(AcceptConnectionSuccessState());
-                                        msg("Now, You Are Friends!");
-                                        getConnections();
-                                        getAllUsers();
-                                        getPosts();
-                                        // Finally, the notification
-                                        // Needs to be removed
-                                        notifications.removeAt(index);
-                                        emit(AcceptConnectionSuccessState());
-
-                                        FirebaseFirestore.instance
-                                        .collection('users')
-                                        .doc(userModel!.id)
-                                        .collection('notifications')
-                                        .doc(notification.id).delete().then((value) {
-                                          emit(AcceptConnectionSuccessState());
-                                        });
-                                  })
-                                      .catchError((error){
-                                        if (kDebugMode) print("1 " + error.toString());
-                                        errorMsg(error.toString());
-                                        emit(AcceptConnectionErrorState());
-                                  });
-                            })
-                                .catchError((error) {
-                              if (kDebugMode) print("2 " + error.toString());
-                                  errorMsg(error.toString());
-                                  emit(AcceptConnectionErrorState());
-                            });
-                      }).catchError((error){
-                        if (kDebugMode) print("3 " + error.toString());
-                        errorMsg(error.toString());
-                        emit(AcceptConnectionErrorState());
-                      });
-                })
-                .catchError((error) {
-                  if (kDebugMode) print("4 " + error.toString());
-                  errorMsg(error.toString());
-                  emit(AcceptConnectionErrorState());
+                    .doc(notification.id)
+                    .delete()
+                    .then((value) {
+                  emit(AcceptConnectionSuccessState());
                 });
-          })
-              .catchError((error) {
-                if (kDebugMode) print("5 " + error.toString());
+              }).catchError((error) {
+                if (kDebugMode) print("1 " + error.toString());
                 errorMsg(error.toString());
                 emit(AcceptConnectionErrorState());
               });
-    })
-        .catchError((error) {
-          if (kDebugMode) print("6 " + error.toString());
+            }).catchError((error) {
+              if (kDebugMode) print("2 " + error.toString());
+              errorMsg(error.toString());
+              emit(AcceptConnectionErrorState());
+            });
+          }).catchError((error) {
+            if (kDebugMode) print("3 " + error.toString());
+            errorMsg(error.toString());
+            emit(AcceptConnectionErrorState());
+          });
+        }).catchError((error) {
+          if (kDebugMode) print("4 " + error.toString());
           errorMsg(error.toString());
           emit(AcceptConnectionErrorState());
+        });
+      }).catchError((error) {
+        if (kDebugMode) print("5 " + error.toString());
+        errorMsg(error.toString());
+        emit(AcceptConnectionErrorState());
+      });
+    }).catchError((error) {
+      if (kDebugMode) print("6 " + error.toString());
+      errorMsg(error.toString());
+      emit(AcceptConnectionErrorState());
     });
-
   }
+
   //#endregion
 
   //#region Get Connections
   List<UserModel> myConnections = [];
-  void getConnections()
-  {
+
+  void getConnections() {
     myConnections = [];
-    FirebaseFirestore.instance.collection('users')
+    FirebaseFirestore.instance
+        .collection('users')
         .doc(CacheHelper.getData('userId'))
         .collection('connections')
         .get()
         .then((value) {
-          value.docs.forEach((doc) {
-            doc.data()['user'].get().then((value) {
-              myConnections.add(UserModel.fromJson(value.data()));
-              emit(GetConnectionsSuccessState());
-            });
-          });
-    })
-        .catchError((error) {
-          errorMsg(error.toString());
-          emit(GetConnectionsErrorState());
+      value.docs.forEach((doc) {
+        doc.data()['user'].get().then((value) {
+          myConnections.add(UserModel.fromJson(value.data()));
+          emit(GetConnectionsSuccessState());
+        });
+      });
+    }).catchError((error) {
+      errorMsg(error.toString());
+      emit(GetConnectionsErrorState());
     });
   }
 
@@ -1115,21 +1175,18 @@ class AppCubit extends Cubit<AppStates> {
 
   String name = "";
 
-  void changeName(String value)
-  {
+  void changeName(String value) {
     name = value;
     emit(OnChangeSearch());
   }
 
-String nameChat = "";
+  String nameChat = "";
 
-  void changeNameChat(String value)
-  {
+  void changeNameChat(String value) {
     nameChat = value;
     emit(OnChangeSearch());
   }
 
-
-  //#endregion
+//#endregion
 
 }
