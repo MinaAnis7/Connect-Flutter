@@ -1,2 +1,1 @@
-<img height="250" src="connect_banner.png">
-  
+<img height="150" src="connect_banner.png">
