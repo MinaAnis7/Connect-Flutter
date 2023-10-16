@@ -555,7 +555,9 @@ class Profile extends StatelessWidget {
 
                 // Post options
                 PopupMenuButton(
-                  color: cubit.isDark? Colors.white : Colors.black,
+                  color: cubit.isDark? DarkSurface : Colors.white,
+                  icon: Icon(Icons.more_vert,
+                  color: cubit.isDark ? Colors.white : Colors.black,),
                   itemBuilder: (context) {
                     return [
                       PopupMenuItem(
@@ -563,7 +565,11 @@ class Profile extends StatelessWidget {
                           children: [
                             Icon(MyIcons.trash, color: Colors.red, size: 20.sp,),
                             SizedBox(width: 7.w,),
-                            Text("Delete", style: TextStyle(fontSize: 14.sp),),
+                            Text("Delete",
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: cubit.isDark ? Colors.white : Colors.black
+                              ),),
                           ],
                         ),
                         onTap: () {
