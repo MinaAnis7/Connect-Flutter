@@ -1,11 +1,11 @@
 <img height="150" src="connect_banner.png">
 
 ## Table of contents
+- [App Video](#app-video)
 - [Project Description](#project-description)
 - [Fonts Used](#fonts-used)
 - [Plugins and Packages](#plugins-and-packages)
 - [Features](#features)
-- [App Video](#app-video)
 
 ## App Video
 
