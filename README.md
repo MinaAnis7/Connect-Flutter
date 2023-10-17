@@ -64,4 +64,4 @@ https://github.com/MinaAnis7/Connect-Flutter/assets/89950065/c1a3ad63-63f5-4f2f-
 - **User Profiles:** You can see others' profiles and see their own posts.
 - **Dark Mode:** Connect has a Dark Mode Feature to make you comfortable browsing it.
 
-if you feel like you want to donate, here's my PayPal email: minapp30@Gmail.com
+If you feel like you want to donate, here's my PayPal email: minapp30@Gmail.com
