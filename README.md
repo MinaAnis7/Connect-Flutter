@@ -2,9 +2,16 @@
 
 ## Table of contents
 - [Project Description](#project-description)
-- [Fonts-Used](#fonts-used)
+- [Fonts Used](#fonts-used)
 - [Plugins and Packages](#plugins-and-packages)
 - [Features](#features)
+- [App Video](#app-video)
+
+## App Video
+
+
+https://github.com/MinaAnis7/Connect-Flutter/assets/89950065/c1a3ad63-63f5-4f2f-a999-4436b8513aa3
+
 
 ## Project Description
 - **Connect** is a social media app that lets you connect with those you want to connect to.
@@ -50,3 +57,9 @@
 - **Love and Comment:** You Can Love and Comment on any post you want, **see** all the comments, and **see** who loved the post.
 - **Read More:** If the post contains more than 3 lines, you can press on read more to see the whole post.
 - **Search:** You can search for any user registered in the app **or** within your chats.
+- **Chats:** You can chat with your connections in real-time and insert emojis.
+- **Connections:** You can make connections by sending a connection request to them. Once they approve the request, you are friends and now you can see your posts and have chats!
+- **Notifications:** Connect can inform you (within the app) who sent a request to you and if the request that you sent was accepted.
+- **Profile Customization:** You can edit your profile and have a new profile and cover images. and edit your name, phone, or your bio.
+- **User Profiles:** You can see others' profiles and see their own posts.
+- **Dark Mode:** Connect has a Dark Mode Feature to make you comfortable browsing it.
