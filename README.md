@@ -63,3 +63,5 @@ https://github.com/MinaAnis7/Connect-Flutter/assets/89950065/c1a3ad63-63f5-4f2f-
 - **Profile Customization:** You can edit your profile and have a new profile and cover images. and edit your name, phone, or your bio.
 - **User Profiles:** You can see others' profiles and see their own posts.
 - **Dark Mode:** Connect has a Dark Mode Feature to make you comfortable browsing it.
+
+if you feel like you want to donate, here's my PayPal email: minapp30@Gmail.com
